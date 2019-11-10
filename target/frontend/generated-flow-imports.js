@@ -8,7 +8,5 @@ import '@vaadin/vaadin-lumo-styles/sizing.js';
 import '@vaadin/vaadin-lumo-styles/spacing.js';
 import '@vaadin/vaadin-lumo-styles/style.js';
 import '@vaadin/vaadin-lumo-styles/icons.js';
+import '@vaadin/vaadin-login/theme/lumo/vaadin-login-overlay.js';
 import '@vaadin/vaadin-ordered-layout/theme/lumo/vaadin-vertical-layout.js';
-import '@vaadin/vaadin-button/theme/lumo/vaadin-button.js';
-import '@vaadin/flow-frontend/flow-component-renderer.js';
-import '@vaadin/vaadin-notification/theme/lumo/vaadin-notification.js';
