@@ -6,3 +6,44 @@
     margin-left: 20px;
     font-weight: bold;
 }
+
+.login {
+    display: flex;
+    justify-content: center;
+    padding-top: 5%;
+    padding-bottom: 10%;
+    background-color: var(--lumo-shade-5pct);
+}
+
+.login-login {
+    border-style: solid;
+    border-width: 2px;
+    border-color: var(--lumo-primary-color);
+    border-radius: 1px;
+    align-items: stretch;
+    width: 50%;
+    box-shadow: 5px 5px 10px grey;
+}
+
+.login-login-layout {
+    width: 50%;
+    background-color: white;
+    margin-left: 0px;
+}
+
+.login-login-information {
+    width: 50%;
+    padding-top: 10%;
+    background-color: var(--lumo-primary-color);
+}
+
+.login-title {
+    font-size: 40px;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+}
+
+.login-author {
+    color: white;
+}

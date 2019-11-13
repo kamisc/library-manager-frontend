@@ -48,7 +48,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public UserDetailsService userDetailsService() {
         UserDetails normalUser = User.withUsername("user").password("{noop}password").roles("User").build();
-        UserDetails adminUser = User.withUsername("admin").password("{noop}password").roles("Admin").build();
+        UserDetails adminUser = User.withUsername("kamil_seweryn@o2.pl").password("{noop}password").roles("Admin").build();
         return new InMemoryUserDetailsManager(normalUser, adminUser);
     }
 
