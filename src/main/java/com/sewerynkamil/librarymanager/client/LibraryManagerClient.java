@@ -2,6 +2,7 @@ package com.sewerynkamil.librarymanager.client;
 
 import com.google.gson.Gson;
 import com.sewerynkamil.librarymanager.dto.RequestJwtDto;
+import com.sewerynkamil.librarymanager.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,18 @@ public class LibraryManagerClient {
         String jsonContent = gson.toJson(authenticationRequest);
         HttpEntity<String> request = new HttpEntity<>(jsonContent, headers);
         return restTemplate.postForObject("http://localhost:8080/v1/login", request, String.class);
+    }
+
+    public void registerUser(UserDto userDto) {
+        Gson gson = new Gson();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String jsonContent = gson.toJson(userDto);
+        HttpEntity<String> request = new HttpEntity<>(jsonContent, headers);
+        restTemplate.postForObject("http://localhost:8080/v1/register", request, UserDto.class);
+    }
+
+    public boolean isUserExist(String email) {
+        return restTemplate.getForObject("http://localhost:8080/v1/users/exist/" + email, Boolean.class);
     }
 
     public void setJwttoken(String jwttoken) {
