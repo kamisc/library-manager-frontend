@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 /**
@@ -26,6 +28,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    private PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -47,9 +53,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     @Override
     public UserDetailsService userDetailsService() {
-        UserDetails normalUser = User.withUsername("user").password("{noop}password").roles("User").build();
-        UserDetails adminUser = User.withUsername("kamil_seweryn@o2.pl").password("{noop}password").roles("Admin").build();
-        return new InMemoryUserDetailsManager(normalUser, adminUser);
+        UserDetails adminUser = User.withUsername("admin@library").password(passwordEncoder().encode("password")).roles("Admin").build();
+        UserDetails admin2User = User.withUsername("admin2@library").password(passwordEncoder().encode("password")).roles("Admin").build();
+        UserDetails normalUser = User.withUsername("kamil@o2.pl").password(passwordEncoder().encode("password")).roles("User").build();
+        return new InMemoryUserDetailsManager(adminUser, admin2User, normalUser);
     }
 
     @Override
