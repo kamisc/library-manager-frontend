@@ -1,6 +1,7 @@
 package com.sewerynkamil.librarymanager.ui;
 
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
+import com.sewerynkamil.librarymanager.ui.view.BookView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -52,6 +53,8 @@ public class MainView extends AppLayout {
 
     private static Tab[] getAvailableTabs() {
         final List<Tab> tabs = new ArrayList<>();
+
+        tabs.add(createTab(VaadinIcon.BOOK, LibraryConst.TITLE_BOOKS, BookView.class));
 
         final String contextPath = VaadinServlet.getCurrent().getServletContext().getContextPath();
         final Tab logoutTab = createTab(createLogoutLink(contextPath));

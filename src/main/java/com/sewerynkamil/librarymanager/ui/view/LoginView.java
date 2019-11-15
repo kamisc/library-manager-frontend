@@ -6,9 +6,9 @@ import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
+import com.sewerynkamil.librarymanager.ui.view.form.RegistrationForm;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.StyleSheet;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
@@ -17,6 +17,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.PWA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -92,7 +93,7 @@ public class LoginView extends VerticalLayout {
                 if(authentication != null) {
                     libraryManagerClient.setJwttoken("Bearer " + jwttoken.substring(13, jwttoken.length()-2));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                    getUI().get().navigate("");
+                    getUI().get().navigate(LibraryConst.ROUTE_BOOKS);
                 }
             } catch (AuthenticationException ex) {
                 loginForm.setError(true);

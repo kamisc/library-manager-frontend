@@ -13,10 +13,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UserDto {
-    private String name;
-    private String surname;
-    private String email;
-    private Integer phoneNumber;
-    private String password;
+public class BookDto {
+    private String author;
+    private String title;
+    private String category;
+    private Integer yearOfFirstPublication;
+    private Long isbn;
 }

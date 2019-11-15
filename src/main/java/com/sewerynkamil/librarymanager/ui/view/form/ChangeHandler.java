@@ -1,4 +1,4 @@
-package com.sewerynkamil.librarymanager.ui.view;
+package com.sewerynkamil.librarymanager.ui.view.form;
 
 /**
  * Author Kamil Seweryn

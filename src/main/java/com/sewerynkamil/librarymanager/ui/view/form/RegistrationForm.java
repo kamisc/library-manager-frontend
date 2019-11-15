@@ -1,4 +1,4 @@
-package com.sewerynkamil.librarymanager.ui.view;
+package com.sewerynkamil.librarymanager.ui.view.form;
 
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
 import com.sewerynkamil.librarymanager.dto.UserDto;
