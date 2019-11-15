@@ -17,7 +17,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.PWA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -87,8 +86,11 @@ public class LoginView extends VerticalLayout {
                 final Authentication authentication = authenticationManager
                         .authenticate(new UsernamePasswordAuthenticationToken(e.getUsername(), e.getPassword()));
 
-                jwttoken = jwttoken + libraryManagerClient.createAuthenticationToken(
-                        new RequestJwtDto(e.getUsername(), e.getPassword()));
+                if(jwttoken != null) {
+                    jwttoken = "";
+                    jwttoken = jwttoken + libraryManagerClient.createAuthenticationToken(
+                            new RequestJwtDto(e.getUsername(), e.getPassword()));
+                }
 
                 if(authentication != null) {
                     libraryManagerClient.setJwttoken("Bearer " + jwttoken.substring(13, jwttoken.length()-2));

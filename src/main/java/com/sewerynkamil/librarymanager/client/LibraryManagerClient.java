@@ -4,11 +4,13 @@ import com.google.gson.Gson;
 import com.sewerynkamil.librarymanager.dto.BookDto;
 import com.sewerynkamil.librarymanager.dto.RequestJwtDto;
 import com.sewerynkamil.librarymanager.dto.UserDto;
+import com.sewerynkamil.librarymanager.dto.WolneLekturyAudiobookDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,18 +44,30 @@ public class LibraryManagerClient {
         restTemplate.postForObject("http://localhost:8080/v1/register", request, UserDto.class);
     }
 
-    public ResponseEntity<BookDto[]> getAllBooks() {
+    public List<BookDto> getAllBooks() {
         headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
-        HttpEntity<String> request = new HttpEntity<>(headers);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<BookDto[]> response =
                 restTemplate.exchange(
                         "http://localhost:8080/v1/books",
                         HttpMethod.GET,
                         request,
                         BookDto[].class);
-        // BookDto[] response = restTemplate.getForObject("http://localhost:8080/v1/books", BookDto[].class);
-        //BookDto[] response = restTemplate.exchange("http://localhost:8080/v1/books", HttpMethod.GET, request, BookDto[].class);
-        return response /*Stream.of(response).collect(Collectors.toList())*/;
+        List<BookDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
+    }
+
+    public List<WolneLekturyAudiobookDto> getAllAudiobooks() {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<WolneLekturyAudiobookDto[]> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/books/audiobooks",
+                        HttpMethod.GET,
+                        request,
+                        WolneLekturyAudiobookDto[].class);
+        List<WolneLekturyAudiobookDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
     }
 
     public boolean isUserExist(String email) {

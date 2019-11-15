@@ -20,8 +20,6 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 
-import java.util.Arrays;
-
 /**
  * Author Kamil Seweryn
  */
@@ -65,7 +63,7 @@ public class BookView extends VerticalLayout {
         filterRow.getCell(grid.getColumnByKey("author")).setComponent(authorFilter);
         filterRow.getCell(grid.getColumnByKey("category")).setComponent(categoryFilter);
 
-        grid.setItems(Arrays.stream(libraryManagerClient.getAllBooks().getBody()));
+        grid.setItems(libraryManagerClient.getAllBooks());
     }
 
 }
