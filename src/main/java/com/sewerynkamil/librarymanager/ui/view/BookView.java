@@ -52,7 +52,7 @@ public class BookView extends VerticalLayout {
 
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
         grid.setColumns("author", "title", "category", "yearOfFirstPublication", "isbn");
-        grid.getColumnByKey("author").setFlexGrow(0).setTextAlign(ColumnTextAlign.START);
+        grid.getColumnByKey("author").setTextAlign(ColumnTextAlign.START);
 
         titleFilter.setPlaceholder("Filter by title");
 
