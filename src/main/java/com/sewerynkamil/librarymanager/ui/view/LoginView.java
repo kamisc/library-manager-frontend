@@ -10,6 +10,7 @@ import com.sewerynkamil.librarymanager.ui.view.form.RegistrationForm;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.login.AbstractLogin;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
 
@@ -81,16 +82,22 @@ public class LoginView extends VerticalLayout {
 
         add(login, registrationForm);
 
+        generateLoginListener(authenticationManager, libraryManagerClient);
+
+        registrationForm.setChangeHandler(() -> {
+            registrationForm.setVisible(false);
+        });
+
+        createAccountButton.addClickListener(e -> registrationForm.createUser(new UserDto()));
+    }
+
+    private void generateLoginListener(AuthenticationManager authenticationManager, LibraryManagerClient libraryManagerClient) {
         loginForm.addLoginListener(e -> {
             try {
                 final Authentication authentication = authenticationManager
                         .authenticate(new UsernamePasswordAuthenticationToken(e.getUsername(), e.getPassword()));
 
-                if(jwttoken != null) {
-                    jwttoken = "";
-                    jwttoken = jwttoken + libraryManagerClient.createAuthenticationToken(
-                            new RequestJwtDto(e.getUsername(), e.getPassword()));
-                }
+                createAuthenticationToken(libraryManagerClient, e.getUsername(), e.getPassword());
 
                 if(authentication != null) {
                     libraryManagerClient.setJwttoken("Bearer " + jwttoken.substring(13, jwttoken.length()-2));
@@ -101,12 +108,14 @@ public class LoginView extends VerticalLayout {
                 loginForm.setError(true);
             }
         });
+    }
 
-        registrationForm.setChangeHandler(() -> {
-            registrationForm.setVisible(false);
-        });
-
-        createAccountButton.addClickListener(e -> registrationForm.createUser(new UserDto()));
+    private void createAuthenticationToken(LibraryManagerClient libraryManagerClient, String username, String password) {
+        if(jwttoken != null) {
+            jwttoken = "";
+            jwttoken = jwttoken + libraryManagerClient.createAuthenticationToken(
+                    new RequestJwtDto(username, password));
+        }
     }
 
 }
