@@ -56,8 +56,6 @@ public class AudiobookView extends VerticalLayout {
         filterRow.getCell(grid.getColumnByKey("author")).setComponent(authorFilter);
 
         audiobookList();
-
-        // grid.setItems(libraryManagerClient.getAllAudiobooks());
     }
 
     private void audiobookList() {
@@ -67,7 +65,7 @@ public class AudiobookView extends VerticalLayout {
                     int limit = query.getLimit();
                     return libraryManagerClient.getAllAudiobooksWithLazyLoading(offset, limit).stream();
                 },
-                query -> libraryManagerClient.getAllAudiobooks().size()
+                query -> libraryManagerClient.countAudiobooks()
         ));
     }
 

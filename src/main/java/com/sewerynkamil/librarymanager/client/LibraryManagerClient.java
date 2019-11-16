@@ -44,25 +44,12 @@ public class LibraryManagerClient {
         restTemplate.postForObject("http://localhost:8080/v1/register", request, UserDto.class);
     }
 
-    public List<BookDto> getAllBooks() {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
-        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
-        ResponseEntity<BookDto[]> response =
-                restTemplate.exchange(
-                        "http://localhost:8080/v1/books",
-                        HttpMethod.GET,
-                        request,
-                        BookDto[].class);
-        List<BookDto> responseList = Arrays.asList(response.getBody());
-        return responseList;
-    }
-
     public List<BookDto> getAllBooksWithLazyLoading(int offset, int limit) {
         headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<BookDto[]> response =
                 restTemplate.exchange(
-                        "http://localhost:8080/v1/books/lazy?offset=" + offset + "&limit=" + limit,
+                        "http://localhost:8080/v1/books?offset=" + offset + "&limit=" + limit,
                         HttpMethod.GET,
                         request,
                         BookDto[].class);
@@ -70,17 +57,16 @@ public class LibraryManagerClient {
         return responseList;
     }
 
-    public List<WolneLekturyAudiobookDto> getAllAudiobooks() {
+    public Long countBooks() {
         headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
-        ResponseEntity<WolneLekturyAudiobookDto[]> response =
+        ResponseEntity<Long> response =
                 restTemplate.exchange(
-                        "http://localhost:8080/v1/books/audiobooks",
+                        "http://localhost:8080/v1/books/count",
                         HttpMethod.GET,
                         request,
-                        WolneLekturyAudiobookDto[].class);
-        List<WolneLekturyAudiobookDto> responseList = Arrays.asList(response.getBody());
-        return responseList;
+                        Long.class);
+        return response.getBody();
     }
 
     public List<WolneLekturyAudiobookDto> getAllAudiobooksWithLazyLoading(int offset, int limit) {
@@ -88,12 +74,24 @@ public class LibraryManagerClient {
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<WolneLekturyAudiobookDto[]> response =
                 restTemplate.exchange(
-                        "http://localhost:8080/v1/books/lazy/audiobooks?offset=" + offset + "&limit=" + limit,
+                        "http://localhost:8080/v1/audiobooks?offset=" + offset + "&limit=" + limit,
                         HttpMethod.GET,
                         request,
                         WolneLekturyAudiobookDto[].class);
         List<WolneLekturyAudiobookDto> responseList = Arrays.asList(response.getBody());
         return responseList;
+    }
+
+    public int countAudiobooks() {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<Integer> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/audiobooks/count",
+                        HttpMethod.GET,
+                        request,
+                        Integer.class);
+        return response.getBody();
     }
 
     public boolean isUserExist(String email) {

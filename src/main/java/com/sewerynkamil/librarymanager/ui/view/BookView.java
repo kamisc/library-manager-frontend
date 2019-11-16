@@ -65,8 +65,6 @@ public class BookView extends VerticalLayout {
         filterRow.getCell(grid.getColumnByKey("category")).setComponent(categoryFilter);
 
         bookList();
-
-        //grid.setItems(libraryManagerClient.getAllBooks());
     }
 
     private void bookList() {
@@ -76,7 +74,7 @@ public class BookView extends VerticalLayout {
                     int limit = query.getLimit();
                     return libraryManagerClient.getAllBooksWithLazyLoading(offset, limit).stream();
                 },
-                query -> libraryManagerClient.getAllBooks().size()
+                query -> libraryManagerClient.countBooks().intValue()
         ));
     }
 
