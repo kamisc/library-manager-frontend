@@ -15,6 +15,7 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,20 @@ public class BookView extends VerticalLayout {
         filterRow.getCell(grid.getColumnByKey("author")).setComponent(authorFilter);
         filterRow.getCell(grid.getColumnByKey("category")).setComponent(categoryFilter);
 
-        grid.setItems(libraryManagerClient.getAllBooks());
+        bookList();
+
+        //grid.setItems(libraryManagerClient.getAllBooks());
+    }
+
+    private void bookList() {
+        grid.setDataProvider(DataProvider.fromFilteringCallbacks(
+                query -> {
+                    int offset = query.getOffset();
+                    int limit = query.getLimit();
+                    return libraryManagerClient.getAllBooksWithLazyLoading(offset, limit).stream();
+                },
+                query -> libraryManagerClient.getAllBooks().size()
+        ));
     }
 
 }

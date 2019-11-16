@@ -11,6 +11,7 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,20 @@ public class AudiobookView extends VerticalLayout {
         filterRow.getCell(grid.getColumnByKey("title")).setComponent(titleFilter);
         filterRow.getCell(grid.getColumnByKey("author")).setComponent(authorFilter);
 
-        grid.setItems(libraryManagerClient.getAllAudiobooks());
+        audiobookList();
+
+        // grid.setItems(libraryManagerClient.getAllAudiobooks());
     }
+
+    private void audiobookList() {
+        grid.setDataProvider(DataProvider.fromFilteringCallbacks(
+                query -> {
+                    int offset = query.getOffset();
+                    int limit = query.getLimit();
+                    return libraryManagerClient.getAllAudiobooksWithLazyLoading(offset, limit).stream();
+                },
+                query -> libraryManagerClient.getAllAudiobooks().size()
+        ));
+    }
+
 }
