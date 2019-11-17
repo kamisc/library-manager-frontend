@@ -57,6 +57,45 @@ public class LibraryManagerClient {
         return responseList;
     }
 
+    public List<BookDto> getAllBooksByAuthorStartsWithIgnoreCase(String author) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<BookDto[]> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/books/authors/" + author,
+                        HttpMethod.GET,
+                        request,
+                        BookDto[].class);
+        List<BookDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
+    }
+
+    public List<BookDto> getAllBooksByTitleStartsWithIgnoreCase(String title) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<BookDto[]> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/books/titles/" + title,
+                        HttpMethod.GET,
+                        request,
+                        BookDto[].class);
+        List<BookDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
+    }
+
+    public List<BookDto> getAllBooksByCategoryStartsWithIgnoreCase(String category) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<BookDto[]> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/books/categories/" + category,
+                        HttpMethod.GET,
+                        request,
+                        BookDto[].class);
+        List<BookDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
+    }
+
     public Long countBooks() {
         headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);

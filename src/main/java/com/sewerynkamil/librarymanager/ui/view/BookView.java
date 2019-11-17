@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +35,11 @@ public class BookView extends VerticalLayout {
 
     private Button addNewBookButton = buttonFactory.createButton(ButtonType.ADDBUTTON, "Add new book", "225px");
     private Grid<BookDto> grid = new Grid<>(BookDto.class);
-    private TextField titleFilter = new TextField();
     private TextField authorFilter = new TextField();
+    private TextField titleFilter = new TextField();
     private TextField categoryFilter = new TextField();
     private HeaderRow filterRow = grid.appendHeaderRow();
 
-    HorizontalLayout actions = new HorizontalLayout(titleFilter);
     HorizontalLayout editors = new HorizontalLayout(grid);
 
     @Autowired
@@ -48,20 +48,44 @@ public class BookView extends VerticalLayout {
 
         editors.setSizeFull();
 
-        add(actions, editors);
+        add(editors);
 
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
         grid.setColumns("author", "title", "category", "yearOfFirstPublication", "isbn");
         grid.getColumnByKey("author").setTextAlign(ColumnTextAlign.START);
 
-        titleFilter.setPlaceholder("Filter by title");
+        generateFilter(authorFilter, "Filter by author");
+        authorFilter.addValueChangeListener(e -> {
+                    if (e.getValue().equals("") || e.getValue() == null) {
+                        bookList();
+                    } else {
+                        grid.setItems(libraryManagerClient.getAllBooksByAuthorStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                    }
+                }
+        );
 
-        authorFilter.setPlaceholder("Filter by author");
+        generateFilter(titleFilter, "Filter by title");
+        titleFilter.addValueChangeListener(e -> {
+                    if (e.getValue().equals("") || e.getValue() == null) {
+                        bookList();
+                    } else {
+                        grid.setItems(libraryManagerClient.getAllBooksByTitleStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                    }
+                }
+        );
 
-        categoryFilter.setPlaceholder("Filter by category");
+        generateFilter(categoryFilter, "Filter by category");
+        categoryFilter.addValueChangeListener(e -> {
+                    if (e.getValue().equals("") || e.getValue() == null) {
+                        bookList();
+                    } else {
+                        grid.setItems(libraryManagerClient.getAllBooksByCategoryStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                    }
+                }
+        );
 
-        filterRow.getCell(grid.getColumnByKey("title")).setComponent(titleFilter);
         filterRow.getCell(grid.getColumnByKey("author")).setComponent(authorFilter);
+        filterRow.getCell(grid.getColumnByKey("title")).setComponent(titleFilter);
         filterRow.getCell(grid.getColumnByKey("category")).setComponent(categoryFilter);
 
         bookList();
@@ -72,10 +96,16 @@ public class BookView extends VerticalLayout {
                 query -> {
                     int offset = query.getOffset();
                     int limit = query.getLimit();
+                    query.getFilter();
                     return libraryManagerClient.getAllBooksWithLazyLoading(offset, limit).stream();
                 },
                 query -> libraryManagerClient.countBooks().intValue()
         ));
     }
 
+    private void generateFilter(TextField field, String placeholder) {
+        field.setPlaceholder(placeholder);
+        field.setValueChangeMode(ValueChangeMode.EAGER);
+        field.setClearButtonVisible(true);
+    }
 }
