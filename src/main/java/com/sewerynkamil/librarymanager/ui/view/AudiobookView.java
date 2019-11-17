@@ -12,6 +12,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,10 +49,27 @@ public class AudiobookView extends VerticalLayout {
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
         grid.setColumns("author", "title", "genre", "epoch", "url");
         grid.getColumnByKey("author").setTextAlign(ColumnTextAlign.START);
+        grid.getColumnByKey("url").setHeader("Listen");
 
-        titleFilter.setPlaceholder("Filter by title");
+        generateFilter(authorFilter, "Filter by author");
+        authorFilter.addValueChangeListener(e -> {
+                    if (e.getValue().equals("") || e.getValue() == null) {
+                        audiobookList();
+                    } else {
+                        grid.setItems(libraryManagerClient.getAllAudiobooksByAuthorStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                    }
+                }
+        );
 
-        authorFilter.setPlaceholder("Filter by author");
+        generateFilter(titleFilter, "Filter by title");
+        titleFilter.addValueChangeListener(e -> {
+                    if (e.getValue().equals("") || e.getValue() == null) {
+                        audiobookList();
+                    } else {
+                        grid.setItems(libraryManagerClient.getAllAudiobooksByTitleStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                    }
+                }
+        );
 
         filterRow.getCell(grid.getColumnByKey("title")).setComponent(titleFilter);
         filterRow.getCell(grid.getColumnByKey("author")).setComponent(authorFilter);
@@ -67,6 +86,12 @@ public class AudiobookView extends VerticalLayout {
                 },
                 query -> libraryManagerClient.countAudiobooks()
         ));
+    }
+
+    private void generateFilter(TextField field, String placeholder) {
+        field.setPlaceholder(placeholder);
+        field.setValueChangeMode(ValueChangeMode.EAGER);
+        field.setClearButtonVisible(true);
     }
 
 }

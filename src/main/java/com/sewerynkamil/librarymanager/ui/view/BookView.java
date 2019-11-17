@@ -40,7 +40,7 @@ public class BookView extends VerticalLayout {
     private TextField categoryFilter = new TextField();
     private HeaderRow filterRow = grid.appendHeaderRow();
 
-    HorizontalLayout editors = new HorizontalLayout(grid);
+    private HorizontalLayout editors = new HorizontalLayout(grid);
 
     @Autowired
     public BookView(LibraryManagerClient libraryManagerClient) {

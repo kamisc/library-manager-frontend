@@ -121,6 +121,32 @@ public class LibraryManagerClient {
         return responseList;
     }
 
+    public List<WolneLekturyAudiobookDto> getAllAudiobooksByAuthorStartsWithIgnoreCase(String author) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<WolneLekturyAudiobookDto[]> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/audiobooks/authors/" + author,
+                        HttpMethod.GET,
+                        request,
+                        WolneLekturyAudiobookDto[].class);
+        List<WolneLekturyAudiobookDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
+    }
+
+    public List<WolneLekturyAudiobookDto> getAllAudiobooksByTitleStartsWithIgnoreCase(String title) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<WolneLekturyAudiobookDto[]> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/audiobooks/titles/" + title,
+                        HttpMethod.GET,
+                        request,
+                        WolneLekturyAudiobookDto[].class);
+        List<WolneLekturyAudiobookDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
+    }
+
     public int countAudiobooks() {
         headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
