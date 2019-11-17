@@ -93,5 +93,4 @@ public class AudiobookView extends VerticalLayout {
         field.setValueChangeMode(ValueChangeMode.EAGER);
         field.setClearButtonVisible(true);
     }
-
 }

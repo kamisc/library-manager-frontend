@@ -117,5 +117,4 @@ public class LoginView extends VerticalLayout {
                     new RequestJwtDto(username, password));
         }
     }
-
 }

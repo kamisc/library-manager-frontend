@@ -5,6 +5,8 @@ import com.sewerynkamil.librarymanager.dto.BookDto;
 import com.sewerynkamil.librarymanager.dto.enumerated.Category;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
+import com.sewerynkamil.librarymanager.utils.StringIntegerConverter;
+import com.sewerynkamil.librarymanager.utils.StringLongConverter;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -18,6 +20,8 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+
+import java.time.LocalDate;
 
 /**
  * Author Kamil Seweryn
@@ -36,8 +40,8 @@ public class BookForm extends FormLayout implements KeyNotifier {
     private TextField author = new TextField("Author");
     private TextField title = new TextField("Title");
     private ComboBox<String> category = new ComboBox<>("Category");
-    private NumberField yearOfFirstPublication = new NumberField("First publication");
-    private NumberField isbn = new NumberField("ISBN");
+    private TextField yearOfFirstPublication = new TextField("First publication");
+    private TextField isbn = new TextField("ISBN");
 
     private Button save = buttonFactory.createButton(ButtonType.SAVE, "Save", "225px");
     private Button update = buttonFactory.createButton(ButtonType.UPDATE, "Update", "225px");
@@ -65,6 +69,26 @@ public class BookForm extends FormLayout implements KeyNotifier {
 
         add(author, title, category, yearOfFirstPublication, isbn, save, update, reset, delete, close);
 
+        binder.forField(author)
+                .asRequired("Required field")
+                .bind(BookDto::getAuthor, BookDto::setAuthor);
+        binder.forField(title)
+                .asRequired("Required field")
+                .bind(BookDto::getTitle, BookDto::setTitle);
+        binder.forField(category)
+                .asRequired("Required field")
+                .bind(BookDto::getCategory, BookDto::setCategory);
+        binder.forField(yearOfFirstPublication)
+                .asRequired("Required field")
+                .withConverter(new StringIntegerConverter())
+                .withValidator(year -> year >= 1600 && year <= LocalDate.now().getYear(), "Dosen't look like a year")
+                .bind(BookDto::getYearOfFirstPublication, BookDto::setYearOfFirstPublication);
+        binder.forField(isbn)
+                .asRequired("Required field")
+                .withValidator(isbn -> isbn.length() >= 10 && isbn.length() <= 13, "Invalid ISBN")
+                .withConverter(new StringLongConverter())
+                .bind(BookDto::getIsbn, BookDto::setIsbn);
+
         setVisible(false);
     }
 
@@ -78,7 +102,7 @@ public class BookForm extends FormLayout implements KeyNotifier {
         }
         final boolean persisted = b.getAuthor() != null;
         if(persisted) {
-            // bookDto = bookService.findById(b.getId());
+            bookDto = client.getOneBook(b.getId());
             dialog.add(this);
             dialog.open();
         } else {

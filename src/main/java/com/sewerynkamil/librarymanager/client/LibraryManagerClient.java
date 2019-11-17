@@ -96,6 +96,18 @@ public class LibraryManagerClient {
         return responseList;
     }
 
+    public BookDto getOneBook(Long id) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<BookDto> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/books/" + id,
+                        HttpMethod.GET,
+                        request,
+                        BookDto.class);
+        return response.getBody();
+    }
+
     public Long countBooks() {
         headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
