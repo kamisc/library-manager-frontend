@@ -159,6 +159,18 @@ public class LibraryManagerClient {
         return response.getBody();
     }
 
+    public UserDto getOneUserByEmail(String email) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<UserDto> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/users/email/" + email,
+                        HttpMethod.GET,
+                        request,
+                        UserDto.class);
+        return response.getBody();
+    }
+
     public boolean isUserExist(String email) {
         return restTemplate.getForObject("http://localhost:8080/v1/users/exist/" + email, Boolean.class);
     }

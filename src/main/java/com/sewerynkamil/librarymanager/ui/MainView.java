@@ -3,6 +3,7 @@ package com.sewerynkamil.librarymanager.ui;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
 import com.sewerynkamil.librarymanager.ui.view.AudiobookView;
 import com.sewerynkamil.librarymanager.ui.view.BookView;
+import com.sewerynkamil.librarymanager.ui.view.UserAccountView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -57,6 +58,7 @@ public class MainView extends AppLayout {
 
         tabs.add(createTab(VaadinIcon.OPEN_BOOK, LibraryConst.TITLE_BOOKS, BookView.class));
         tabs.add(createTab(VaadinIcon.MUSIC, LibraryConst.TITLE_AUDIOBOOKS, AudiobookView.class));
+        tabs.add(createTab(VaadinIcon.USER_CARD, LibraryConst.TITLE_MY_ACCOUNT, UserAccountView.class));
 
         final String contextPath = VaadinServlet.getCurrent().getServletContext().getContextPath();
         final Tab logoutTab = createTab(createLogoutLink(contextPath));
