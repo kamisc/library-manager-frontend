@@ -7,6 +7,7 @@ import com.sewerynkamil.librarymanager.ui.MainView;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
+import com.sewerynkamil.librarymanager.ui.view.form.BookForm;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
@@ -40,15 +41,19 @@ public class BookView extends VerticalLayout {
     private TextField categoryFilter = new TextField();
     private HeaderRow filterRow = grid.appendHeaderRow();
 
+    private HorizontalLayout actions = new HorizontalLayout();
     private HorizontalLayout editors = new HorizontalLayout(grid);
 
+    private BookForm bookForm;
+
     @Autowired
-    public BookView(LibraryManagerClient libraryManagerClient) {
+    public BookView(LibraryManagerClient libraryManagerClient, BookForm bookForm) {
         this.libraryManagerClient = libraryManagerClient;
+        this.bookForm = bookForm;
 
         editors.setSizeFull();
 
-        add(editors);
+        add(actions, editors);
 
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
         grid.setColumns("author", "title", "category", "yearOfFirstPublication", "isbn");
@@ -87,6 +92,21 @@ public class BookView extends VerticalLayout {
         filterRow.getCell(grid.getColumnByKey("author")).setComponent(authorFilter);
         filterRow.getCell(grid.getColumnByKey("title")).setComponent(titleFilter);
         filterRow.getCell(grid.getColumnByKey("category")).setComponent(categoryFilter);
+
+        if(SecurityUtils.isAccessGranted(BookForm.class)) {
+            grid.asSingleSelect().addValueChangeListener(e -> {
+                bookForm.editBook(e.getValue());
+            });
+
+            bookForm.setChangeHandler(() -> {
+                bookForm.setVisible(false);
+                bookList();
+            });
+
+            actions.add(addNewBookButton);
+
+            addNewBookButton.addClickListener(e -> bookForm.editBook(new BookDto()));
+        }
 
         bookList();
     }
