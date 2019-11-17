@@ -16,6 +16,7 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 
@@ -53,22 +54,22 @@ public class AudiobookView extends VerticalLayout {
 
         generateFilter(authorFilter, "Filter by author");
         authorFilter.addValueChangeListener(e -> {
-                    if (e.getValue().equals("") || e.getValue() == null) {
-                        audiobookList();
-                    } else {
-                        grid.setItems(libraryManagerClient.getAllAudiobooksByAuthorStartsWithIgnoreCase(e.getValue().toLowerCase()));
-                    }
+                if (StringUtils.isBlank(e.getValue())) {
+                    audiobookList();
+                } else {
+                    grid.setItems(libraryManagerClient.getAllAudiobooksByAuthorStartsWithIgnoreCase(e.getValue().toLowerCase()));
                 }
+            }
         );
 
         generateFilter(titleFilter, "Filter by title");
         titleFilter.addValueChangeListener(e -> {
-                    if (e.getValue().equals("") || e.getValue() == null) {
-                        audiobookList();
-                    } else {
-                        grid.setItems(libraryManagerClient.getAllAudiobooksByTitleStartsWithIgnoreCase(e.getValue().toLowerCase()));
-                    }
+                if (StringUtils.isBlank(e.getValue())) {
+                    audiobookList();
+                } else {
+                    grid.setItems(libraryManagerClient.getAllAudiobooksByTitleStartsWithIgnoreCase(e.getValue().toLowerCase()));
                 }
+            }
         );
 
         filterRow.getCell(grid.getColumnByKey("title")).setComponent(titleFilter);

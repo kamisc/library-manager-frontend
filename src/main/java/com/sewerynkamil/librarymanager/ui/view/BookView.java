@@ -20,6 +20,7 @@ import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 
@@ -61,32 +62,32 @@ public class BookView extends VerticalLayout {
 
         generateFilter(authorFilter, "Filter by author");
         authorFilter.addValueChangeListener(e -> {
-                    if (e.getValue().equals("") || e.getValue() == null) {
-                        bookList();
-                    } else {
-                        grid.setItems(libraryManagerClient.getAllBooksByAuthorStartsWithIgnoreCase(e.getValue().toLowerCase()));
-                    }
+                if (StringUtils.isBlank(e.getValue())) {
+                    bookList();
+                } else {
+                    grid.setItems(libraryManagerClient.getAllBooksByAuthorStartsWithIgnoreCase(e.getValue().toLowerCase()));
                 }
+            }
         );
 
         generateFilter(titleFilter, "Filter by title");
         titleFilter.addValueChangeListener(e -> {
-                    if (e.getValue().equals("") || e.getValue() == null) {
+                if (StringUtils.isBlank(e.getValue())) {
                         bookList();
-                    } else {
-                        grid.setItems(libraryManagerClient.getAllBooksByTitleStartsWithIgnoreCase(e.getValue().toLowerCase()));
-                    }
+                } else {
+                    grid.setItems(libraryManagerClient.getAllBooksByTitleStartsWithIgnoreCase(e.getValue().toLowerCase()));
                 }
+            }
         );
 
         generateFilter(categoryFilter, "Filter by category");
         categoryFilter.addValueChangeListener(e -> {
-                    if (e.getValue().equals("") || e.getValue() == null) {
-                        bookList();
-                    } else {
+                if (StringUtils.isBlank(e.getValue())) {
+                    bookList();
+                } else {
                         grid.setItems(libraryManagerClient.getAllBooksByCategoryStartsWithIgnoreCase(e.getValue().toLowerCase()));
-                    }
                 }
+            }
         );
 
         filterRow.getCell(grid.getColumnByKey("author")).setComponent(authorFilter);
