@@ -21,15 +21,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 @PageTitle(LibraryConst.TITLE_MY_ACCOUNT)
 @Secured({"ROLE_User", "ROLE_Admin"})
 public class UserAccountView extends VerticalLayout {
-    private LibraryManagerClient libraryManagerClient;
+    private LibraryManagerClient client;
 
     private TextField textField = new TextField("E-mail");
 
     @Autowired
-    public UserAccountView(LibraryManagerClient libraryManagerClient) {
-        this.libraryManagerClient = libraryManagerClient;
+    public UserAccountView(LibraryManagerClient client) {
+        this.client = client;
 
-        UserDto userDto = getCurrentUser(libraryManagerClient);
+        UserDto userDto = getCurrentUser(client);
 
         textField.setValue(userDto.getEmail());
 

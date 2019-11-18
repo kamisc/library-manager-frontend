@@ -12,8 +12,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Author Kamil Seweryn
@@ -106,6 +104,10 @@ public class LibraryManagerClient {
                         request,
                         BookDto.class);
         return response.getBody();
+    }
+
+    public boolean isBookExist(String title) {
+        return restTemplate.getForObject("http://localhost:8080/v1/books/exist/" + title, Boolean.class);
     }
 
     public Long countBooks() {

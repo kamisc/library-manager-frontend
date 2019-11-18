@@ -32,7 +32,7 @@ import org.springframework.security.access.annotation.Secured;
 @PageTitle(LibraryConst.TITLE_BOOKS)
 @Secured({"ROLE_User", "ROLE_Admin"})
 public class BookView extends VerticalLayout {
-    private LibraryManagerClient libraryManagerClient;
+    private LibraryManagerClient client;
     private ButtonFactory buttonFactory = new ButtonFactory();
 
     private Button addNewBookButton = buttonFactory.createButton(ButtonType.ADDBUTTON, "Add new book", "225px");
@@ -48,8 +48,8 @@ public class BookView extends VerticalLayout {
     private BookForm bookForm;
 
     @Autowired
-    public BookView(LibraryManagerClient libraryManagerClient, BookForm bookForm) {
-        this.libraryManagerClient = libraryManagerClient;
+    public BookView(LibraryManagerClient client, BookForm bookForm) {
+        this.client = client;
         this.bookForm = bookForm;
 
         editors.setSizeFull();
@@ -65,7 +65,7 @@ public class BookView extends VerticalLayout {
                 if (StringUtils.isBlank(e.getValue())) {
                     bookList();
                 } else {
-                    grid.setItems(libraryManagerClient.getAllBooksByAuthorStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                    grid.setItems(client.getAllBooksByAuthorStartsWithIgnoreCase(e.getValue().toLowerCase()));
                 }
             }
         );
@@ -75,7 +75,7 @@ public class BookView extends VerticalLayout {
                 if (StringUtils.isBlank(e.getValue())) {
                         bookList();
                 } else {
-                    grid.setItems(libraryManagerClient.getAllBooksByTitleStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                    grid.setItems(client.getAllBooksByTitleStartsWithIgnoreCase(e.getValue().toLowerCase()));
                 }
             }
         );
@@ -85,7 +85,7 @@ public class BookView extends VerticalLayout {
                 if (StringUtils.isBlank(e.getValue())) {
                     bookList();
                 } else {
-                        grid.setItems(libraryManagerClient.getAllBooksByCategoryStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                        grid.setItems(client.getAllBooksByCategoryStartsWithIgnoreCase(e.getValue().toLowerCase()));
                 }
             }
         );
@@ -118,9 +118,9 @@ public class BookView extends VerticalLayout {
                     int offset = query.getOffset();
                     int limit = query.getLimit();
                     query.getFilter();
-                    return libraryManagerClient.getAllBooksWithLazyLoading(offset, limit).stream();
+                    return client.getAllBooksWithLazyLoading(offset, limit).stream();
                 },
-                query -> libraryManagerClient.countBooks().intValue()
+                query -> client.countBooks().intValue()
         ));
     }
 

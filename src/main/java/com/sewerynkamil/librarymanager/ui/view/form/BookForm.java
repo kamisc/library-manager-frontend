@@ -13,7 +13,6 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -93,7 +92,6 @@ public class BookForm extends FormLayout implements KeyNotifier {
     }
 
     public final void editBook(BookDto b) {
-
         dialog.setCloseOnOutsideClick(false);
 
         if (b == null) {

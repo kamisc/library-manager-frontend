@@ -12,7 +12,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -28,7 +27,7 @@ import org.springframework.security.access.annotation.Secured;
 @PageTitle(LibraryConst.TITLE_AUDIOBOOKS)
 @Secured({"ROLE_User", "ROLE_Admin"})
 public class AudiobookView extends VerticalLayout {
-    private LibraryManagerClient libraryManagerClient;
+    private LibraryManagerClient client;
 
     private Grid<WolneLekturyAudiobookDto> grid = new Grid<>(WolneLekturyAudiobookDto.class);
 
@@ -40,8 +39,8 @@ public class AudiobookView extends VerticalLayout {
     HorizontalLayout editors = new HorizontalLayout(grid);
 
     @Autowired
-    public AudiobookView(LibraryManagerClient libraryManagerClient) {
-        this.libraryManagerClient = libraryManagerClient;
+    public AudiobookView(LibraryManagerClient client) {
+        this.client = client;
 
         editors.setSizeFull();
 
@@ -57,7 +56,7 @@ public class AudiobookView extends VerticalLayout {
                 if (StringUtils.isBlank(e.getValue())) {
                     audiobookList();
                 } else {
-                    grid.setItems(libraryManagerClient.getAllAudiobooksByAuthorStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                    grid.setItems(client.getAllAudiobooksByAuthorStartsWithIgnoreCase(e.getValue().toLowerCase()));
                 }
             }
         );
@@ -67,7 +66,7 @@ public class AudiobookView extends VerticalLayout {
                 if (StringUtils.isBlank(e.getValue())) {
                     audiobookList();
                 } else {
-                    grid.setItems(libraryManagerClient.getAllAudiobooksByTitleStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                    grid.setItems(client.getAllAudiobooksByTitleStartsWithIgnoreCase(e.getValue().toLowerCase()));
                 }
             }
         );
@@ -83,9 +82,9 @@ public class AudiobookView extends VerticalLayout {
                 query -> {
                     int offset = query.getOffset();
                     int limit = query.getLimit();
-                    return libraryManagerClient.getAllAudiobooksWithLazyLoading(offset, limit).stream();
+                    return client.getAllAudiobooksWithLazyLoading(offset, limit).stream();
                 },
-                query -> libraryManagerClient.countAudiobooks()
+                query -> client.countAudiobooks()
         ));
     }
 

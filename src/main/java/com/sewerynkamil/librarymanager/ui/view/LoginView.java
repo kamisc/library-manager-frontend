@@ -10,7 +10,6 @@ import com.sewerynkamil.librarymanager.ui.view.form.RegistrationForm;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.login.AbstractLogin;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
 
@@ -55,7 +54,7 @@ public class LoginView extends VerticalLayout {
     @Autowired
     public LoginView(
             AuthenticationManager authenticationManager,
-            LibraryManagerClient libraryManagerClient,
+            LibraryManagerClient client,
             RegistrationForm registrationForm) {
         this.registrationForm = registrationForm;
 
@@ -82,7 +81,7 @@ public class LoginView extends VerticalLayout {
 
         add(login, registrationForm);
 
-        generateLoginListener(authenticationManager, libraryManagerClient);
+        generateLoginListener(authenticationManager, client);
 
         registrationForm.setChangeHandler(() -> {
             registrationForm.setVisible(false);
@@ -91,16 +90,16 @@ public class LoginView extends VerticalLayout {
         createAccountButton.addClickListener(e -> registrationForm.createUser(new UserDto()));
     }
 
-    private void generateLoginListener(AuthenticationManager authenticationManager, LibraryManagerClient libraryManagerClient) {
+    private void generateLoginListener(AuthenticationManager authenticationManager, LibraryManagerClient client) {
         loginForm.addLoginListener(e -> {
             try {
                 final Authentication authentication = authenticationManager
                         .authenticate(new UsernamePasswordAuthenticationToken(e.getUsername(), e.getPassword()));
 
-                createAuthenticationToken(libraryManagerClient, e.getUsername(), e.getPassword());
+                createAuthenticationToken(client, e.getUsername(), e.getPassword());
 
                 if(authentication != null) {
-                    libraryManagerClient.setJwttoken("Bearer " + jwttoken.substring(13, jwttoken.length()-2));
+                    client.setJwttoken("Bearer " + jwttoken.substring(13, jwttoken.length()-2));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     getUI().get().navigate(LibraryConst.ROUTE_BOOKS);
                 }
@@ -110,10 +109,10 @@ public class LoginView extends VerticalLayout {
         });
     }
 
-    private void createAuthenticationToken(LibraryManagerClient libraryManagerClient, String username, String password) {
+    private void createAuthenticationToken(LibraryManagerClient client, String username, String password) {
         if(jwttoken != null) {
             jwttoken = "";
-            jwttoken = jwttoken + libraryManagerClient.createAuthenticationToken(
+            jwttoken = jwttoken + client.createAuthenticationToken(
                     new RequestJwtDto(username, password));
         }
     }
