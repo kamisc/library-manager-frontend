@@ -60,9 +60,6 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
 
     private Binder<BookDto> binder = new Binder<>(BookDto.class);
 
-    private String oldTitle;
-    private Long id;
-
     @Autowired
     public BookForm(LibraryManagerClient client) {
         this.client = client;
@@ -127,7 +124,7 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
 
     @Override
     public void update() {
-        if(!title.getValue().equals(oldTitle) && client.isBookExist(title.getValue())) {
+        if(!title.getValue().equals(bookDto.getTitle()) && client.isBookExist(title.getValue())) {
             bookExist.open();
         } else {
             client.updateBook(bookDto);
@@ -137,7 +134,7 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
 
     @Override
     public void delete() {
-        client.deleteBook(id);
+        client.deleteBook(bookDto.getId());
         setActions(bookDeleteSuccessful, changeHandler, dialog);
     }
 
@@ -151,9 +148,6 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
         final boolean persisted = b.getId() != null;
         if(persisted) {
             bookDto = client.getOneBook(b.getId());
-
-            id = bookDto.getId();
-            oldTitle = bookDto.getTitle();
 
             dialog.add(this);
             dialog.open();
