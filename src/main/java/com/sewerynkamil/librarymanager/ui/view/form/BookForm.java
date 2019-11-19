@@ -12,7 +12,8 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -48,16 +49,25 @@ public class BookForm extends FormLayout implements KeyNotifier {
     private Button delete = buttonFactory.createButton(ButtonType.DELETE, "Delete", "225px");
     private Button close = buttonFactory.createButton(ButtonType.CLOSE, "Close", "225px");
 
-    private Dialog bookExist = new Dialog(new Label("This book exist in the base!"));
-    private Dialog bookSaveSuccessful = new Dialog(new Label("The book has been added succesfully!"));
-    private Dialog bookUpdateSuccessful = new Dialog(new Label("The book has been updated succesfully!"));
+    private Notification bookExist = new Notification("This book exist in the base!", 3000);
+    private Notification bookSaveSuccessful = new Notification("The book has been added succesfully!", 3000);
+    private Notification bookUpdateSuccessful = new Notification("The book has been updated succesfully!", 3000);
+    private Notification bookDeleteSuccessful = new Notification("The book has been deleted succesfully!", 3000);
     private Dialog dialog = new Dialog();
 
     private Binder<BookDto> binder = new Binder<>(BookDto.class);
 
+    private String oldTitle;
+    private Long id;
+
     @Autowired
     public BookForm(LibraryManagerClient client) {
         this.client = client;
+
+        bookExist.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        bookSaveSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        bookUpdateSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        bookDeleteSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
         category.setItems(Category.categoryList());
         category.setPlaceholder("Select category");
@@ -67,6 +77,24 @@ public class BookForm extends FormLayout implements KeyNotifier {
         setWidth("260px");
 
         add(author, title, category, yearOfFirstPublication, isbn, save, update, reset, delete, close);
+
+        author.setClearButtonVisible(true);
+        title.setClearButtonVisible(true);
+        category.setClearButtonVisible(true);
+        yearOfFirstPublication.setClearButtonVisible(true);
+        isbn.setClearButtonVisible(true);
+
+        author.setRequired(true);
+        title.setRequired(true);
+        category.setRequired(true);
+        yearOfFirstPublication.setRequired(true);
+        isbn.setRequired(true);
+
+        author.setErrorMessage("Required field");
+        title.setErrorMessage("Required field");
+        category.setErrorMessage("Required field");
+        yearOfFirstPublication.setErrorMessage("Required field");
+        isbn.setErrorMessage("Required field");
 
         binder.forField(author)
                 .asRequired("Required field")
@@ -88,7 +116,42 @@ public class BookForm extends FormLayout implements KeyNotifier {
                 .withConverter(new StringLongConverter())
                 .bind(BookDto::getIsbn, BookDto::setIsbn);
 
+        save.addClickListener(e -> save());
+        update.addClickListener(e -> update());
+        delete.addClickListener(e -> delete());
+        reset.addClickListener(e -> editBook(bookDto));
+        close.addClickListener(e -> dialog.close());
+
         setVisible(false);
+    }
+
+    private void save() {
+        if(!client.isBookExist(title.getValue())) {
+            client.saveNewBook(bookDto);
+            bookSaveSuccessful.open();
+            changeHandler.onChange();
+            dialog.close();
+        } else {
+            bookExist.open();
+        }
+    }
+
+    private void update() {
+        if(!title.getValue().equals(oldTitle) && client.isBookExist(title.getValue())) {
+            bookExist.open();
+        } else {
+            client.updateBook(bookDto);
+            bookUpdateSuccessful.open();
+            changeHandler.onChange();
+            dialog.close();
+        }
+    }
+
+    private void delete() {
+        client.deleteBook(id);
+        bookDeleteSuccessful.open();
+        changeHandler.onChange();
+        dialog.close();
     }
 
     public final void editBook(BookDto b) {
@@ -98,9 +161,13 @@ public class BookForm extends FormLayout implements KeyNotifier {
             setVisible(false);
             return;
         }
-        final boolean persisted = b.getAuthor() != null;
+        final boolean persisted = b.getId() != null;
         if(persisted) {
             bookDto = client.getOneBook(b.getId());
+
+            id = bookDto.getId();
+            oldTitle = bookDto.getTitle();
+
             dialog.add(this);
             dialog.open();
         } else {

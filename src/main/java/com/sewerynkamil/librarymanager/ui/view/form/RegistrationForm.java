@@ -8,7 +8,8 @@ import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -40,13 +41,16 @@ public class RegistrationForm extends FormLayout implements KeyNotifier {
     private Button reset = buttonFactory.createButton(ButtonType.RESET, "Reset", "225px");
     private Button close = buttonFactory.createButton(ButtonType.CLOSE, "Close", "225px");
 
-    private Dialog userExist = new Dialog(new Label("User with that e-mail already exist!"));
-    private Dialog userSaveSuccessful = new Dialog(new Label("The user has been added succesfully!"));
+    private Notification userExist = new Notification("User with that e-mail already exist!", 3000);
+    private Notification userSaveSuccessful = new Notification("The user has been added succesfully!", 3000);
     private Dialog dialog = new Dialog();
 
     @Autowired
     public RegistrationForm(LibraryManagerClient client) {
         this.client = client;
+
+        userExist.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        userSaveSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
         setWidth("260px");
 

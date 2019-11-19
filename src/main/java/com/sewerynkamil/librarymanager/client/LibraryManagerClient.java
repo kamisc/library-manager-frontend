@@ -107,7 +107,15 @@ public class LibraryManagerClient {
     }
 
     public boolean isBookExist(String title) {
-        return restTemplate.getForObject("http://localhost:8080/v1/books/exist/" + title, Boolean.class);
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<Boolean> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/books/exist/" + title,
+                        HttpMethod.GET,
+                        request,
+                        Boolean.class);
+        return response.getBody();
     }
 
     public Long countBooks() {
@@ -120,6 +128,31 @@ public class LibraryManagerClient {
                         request,
                         Long.class);
         return response.getBody();
+    }
+
+    public void saveNewBook(BookDto bookDto) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        Gson gson = new Gson();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String jsonContent = gson.toJson(bookDto);
+        HttpEntity<String> request = new HttpEntity<>(jsonContent, headers);
+        restTemplate.postForObject("http://localhost:8080/v1/books", request, BookDto.class);
+    }
+
+    public void updateBook(BookDto bookDto) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        Gson gson = new Gson();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String jsonContent = gson.toJson(bookDto);
+        HttpEntity<String> request = new HttpEntity<>(jsonContent, headers);
+        restTemplate.put("http://localhost:8080/v1/books", request, BookDto.class);
+    }
+
+    public void deleteBook(Long id) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        restTemplate.exchange("http://localhost:8080/v1/books?id=" + id, HttpMethod.DELETE, request, Void.class, 1);
     }
 
     public List<WolneLekturyAudiobookDto> getAllAudiobooksWithLazyLoading(int offset, int limit) {
