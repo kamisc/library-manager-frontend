@@ -1,5 +1,7 @@
 package com.sewerynkamil.librarymanager.security;
 
+import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -7,12 +9,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 /**
  * Author Kamil Seweryn
@@ -24,14 +23,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final String LOGOUT_SUCCESS_URL = "/";
     private final String PAGE_LOGIN = "login";
 
+    @Autowired
+    private LibraryManagerClient client;
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
-    }
-
-    private PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -53,14 +51,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     @Override
     public UserDetailsService userDetailsService() {
-        UserDetails adminUser = User.withUsername("admin@library.com").password(passwordEncoder().encode("password")).roles("Admin").build();
-        UserDetails admin2User = User.withUsername("admin2@library.com").password(passwordEncoder().encode("password")).roles("Admin").build();
-        UserDetails normalUser = User.withUsername("kamil@o2.pl").password(passwordEncoder().encode("password")).roles("User").build();
-        return new InMemoryUserDetailsManager(adminUser, admin2User, normalUser);
+        return username -> client.getOneUserByEmail(username);
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers(
                 "/VAADIN/**",
                 "/favicon.ico",
