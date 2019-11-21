@@ -2,11 +2,13 @@ package com.sewerynkamil.librarymanager.ui.view;
 
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
 import com.sewerynkamil.librarymanager.dto.UserDto;
+import com.sewerynkamil.librarymanager.dto.enumerated.Role;
 import com.sewerynkamil.librarymanager.ui.MainView;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -14,10 +16,15 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+
+import java.util.List;
 
 /**
  * Author Kamil Seweryn
@@ -49,7 +56,61 @@ public class UserView extends VerticalLayout {
         add(actions, editors);
 
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
-        grid.setColumns("name", "surname", "email", "phoneNumber");
+        grid.setColumns("name", "surname", "email", "phoneNumber", "role");
         grid.getColumnByKey("name").setTextAlign(ColumnTextAlign.START);
+
+        generateFilter(nameFilter, "Filter by name");
+        nameFilter.addValueChangeListener(e -> {
+                    if (StringUtils.isBlank(e.getValue())) {
+                        userList();
+                    } else {
+                        grid.setItems(client.getAllUsersByNameStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                    }
+                }
+        );
+
+        generateFilter(surnameFilter, "Filter by surname");
+        surnameFilter.addValueChangeListener(e -> {
+                    if (StringUtils.isBlank(e.getValue())) {
+                        userList();
+                    } else {
+                        grid.setItems(client.getAllUsersBySurnameStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                    }
+                }
+        );
+
+        generateFilter(emailFilter, "Filter by email");
+        emailFilter.addValueChangeListener(e -> {
+                    if (StringUtils.isBlank(e.getValue())) {
+                        userList();
+                    } else {
+                        grid.setItems(client.getAllUsersByEmailStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                    }
+                }
+        );
+
+        filterRow.getCell(grid.getColumnByKey("name")).setComponent(nameFilter);
+        filterRow.getCell(grid.getColumnByKey("surname")).setComponent(surnameFilter);
+        filterRow.getCell(grid.getColumnByKey("email")).setComponent(emailFilter);
+
+        userList();
+    }
+
+    private void userList() {
+        grid.setDataProvider(DataProvider.fromFilteringCallbacks(
+                query -> {
+                    int offset = query.getOffset();
+                    int limit = query.getLimit();
+                    query.getFilter();
+                    return client.getAllUsersWithLazyLoading(offset, limit).stream();
+                },
+                query -> client.countUsers().intValue()
+        ));
+    }
+
+    private void generateFilter(TextField field, String placeholder) {
+        field.setPlaceholder(placeholder);
+        field.setValueChangeMode(ValueChangeMode.EAGER);
+        field.setClearButtonVisible(true);
     }
 }

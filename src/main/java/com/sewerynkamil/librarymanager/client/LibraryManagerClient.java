@@ -5,6 +5,7 @@ import com.sewerynkamil.librarymanager.dto.BookDto;
 import com.sewerynkamil.librarymanager.dto.RequestJwtDto;
 import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.dto.WolneLekturyAudiobookDto;
+import com.sewerynkamil.librarymanager.dto.enumerated.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -206,12 +207,76 @@ public class LibraryManagerClient {
         return response.getBody();
     }
 
+    public List<UserDto> getAllUsersWithLazyLoading(int offset, int limit) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<UserDto[]> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/users?offset=" + offset + "&limit=" + limit,
+                        HttpMethod.GET,
+                        request,
+                        UserDto[].class);
+        List<UserDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
+    }
+
+    public List<UserDto> getAllUsersByNameStartsWithIgnoreCase(String name) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<UserDto[]> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/users/names/" + name,
+                        HttpMethod.GET,
+                        request,
+                        UserDto[].class);
+        List<UserDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
+    }
+
+    public List<UserDto> getAllUsersBySurnameStartsWithIgnoreCase(String surname) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<UserDto[]> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/users/surnames/" + surname,
+                        HttpMethod.GET,
+                        request,
+                        UserDto[].class);
+        List<UserDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
+    }
+
+    public List<UserDto> getAllUsersByEmailStartsWithIgnoreCase(String email) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<UserDto[]> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/users/emails/" + email,
+                        HttpMethod.GET,
+                        request,
+                        UserDto[].class);
+        List<UserDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
+    }
+
     public UserDto getOneUserByEmail(String email) {
         return restTemplate.getForObject("http://localhost:8080/v1/users/email/" + email, UserDto.class);
     }
 
     public boolean isUserExist(String email) {
         return restTemplate.getForObject("http://localhost:8080/v1/users/exist/" + email, Boolean.class);
+    }
+
+    public Long countUsers() {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<Long> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/users/count",
+                        HttpMethod.GET,
+                        request,
+                        Long.class);
+        return response.getBody();
     }
 
     public void setJwttoken(String jwttoken) {
