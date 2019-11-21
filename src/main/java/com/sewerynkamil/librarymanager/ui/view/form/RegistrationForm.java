@@ -2,6 +2,7 @@ package com.sewerynkamil.librarymanager.ui.view.form;
 
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
 import com.sewerynkamil.librarymanager.dto.UserDto;
+import com.sewerynkamil.librarymanager.dto.enumerated.Role;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
 import com.vaadin.flow.component.KeyNotifier;
@@ -90,6 +91,7 @@ public class RegistrationForm extends FormLayout implements KeyNotifier {
         userDto.setEmail(email.getValue());
         userDto.setPhoneNumber(phoneNumber.getValue().intValue());
         userDto.setPassword(password.getValue());
+        userDto.setRole(Role.USER);
 
         if(!client.isUserExist(userDto.getEmail())) {
             client.registerUser(userDto);
