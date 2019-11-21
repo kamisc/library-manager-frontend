@@ -22,6 +22,7 @@ import java.util.List;
 @Getter
 @Setter
 public class UserDto implements UserDetails {
+    private Long id;
     private String name;
     private String surname;
     private String email;

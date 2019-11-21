@@ -1,14 +1,14 @@
 package com.sewerynkamil.librarymanager.ui.view;
 
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
+import com.sewerynkamil.librarymanager.dto.BookDto;
 import com.sewerynkamil.librarymanager.dto.UserDto;
-import com.sewerynkamil.librarymanager.dto.enumerated.Role;
 import com.sewerynkamil.librarymanager.ui.MainView;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
+import com.sewerynkamil.librarymanager.ui.view.form.UserForm;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -23,8 +23,6 @@ import com.vaadin.flow.router.Route;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-
-import java.util.List;
 
 /**
  * Author Kamil Seweryn
@@ -47,9 +45,12 @@ public class UserView extends VerticalLayout {
     private HorizontalLayout actions = new HorizontalLayout(addNewUserButton);
     private HorizontalLayout editors = new HorizontalLayout(grid);
 
+    private UserForm userForm;
+
     @Autowired
-    public UserView(LibraryManagerClient client) {
+    public UserView(LibraryManagerClient client, UserForm userForm) {
         this.client = client;
+        this.userForm = userForm;
 
         editors.setSizeFull();
 
@@ -88,6 +89,19 @@ public class UserView extends VerticalLayout {
                     }
                 }
         );
+
+        grid.asSingleSelect().addValueChangeListener(e -> {
+            userForm.editUser(e.getValue());
+        });
+
+        userForm.setChangeHandler(() -> {
+            userForm.setVisible(false);
+            userList();
+        });
+
+        actions.add(addNewUserButton);
+
+        addNewUserButton.addClickListener(e -> userForm.editUser(new UserDto()));
 
         filterRow.getCell(grid.getColumnByKey("name")).setComponent(nameFilter);
         filterRow.getCell(grid.getColumnByKey("surname")).setComponent(surnameFilter);
