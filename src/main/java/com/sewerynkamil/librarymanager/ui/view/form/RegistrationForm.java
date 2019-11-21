@@ -91,7 +91,7 @@ public class RegistrationForm extends FormLayout implements KeyNotifier {
         userDto.setEmail(email.getValue());
         userDto.setPhoneNumber(phoneNumber.getValue().intValue());
         userDto.setPassword(password.getValue());
-        userDto.setRole(Role.USER);
+        userDto.setRole(Role.USER.getRole());
 
         if(!client.isUserExist(userDto.getEmail())) {
             client.registerUser(userDto);

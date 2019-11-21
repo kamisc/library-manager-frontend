@@ -46,6 +46,7 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
     private TextField surname = new TextField("Surname");
     private EmailField email = new EmailField("E-mail");
     private TextField phoneNumber = new TextField("Phone number");
+    private PasswordField password = new PasswordField("Password");
     private ComboBox<String> role = new ComboBox<>("Role");
 
     private Button save = buttonFactory.createButton(ButtonType.SAVE, "Save", "225px");
@@ -81,7 +82,7 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
 
         setWidth("260px");
 
-        add(name, surname, email, phoneNumber, role, save, update, reset, delete, close);
+        add(name, surname, email, phoneNumber, password, role, save, update, reset, delete, close);
 
         binder.forField(name)
                 .asRequired("Required field")
@@ -109,17 +110,35 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
 
     @Override
     public void save() {
+        /*userDto.setName(name.getValue());
+        userDto.setSurname(surname.getValue());
+        userDto.setEmail(email.getValue());
+        userDto.setPhoneNumber(Integer.parseInt(phoneNumber.getValue()));*/
+        userDto.setPassword(password.getValue());
+        userDto.setRole(Role.USER.getRole());
 
+        if(!client.isUserExist(email.getValue())) {
+            client.saveNewUser(userDto);
+            setActions(userSaveSuccessful, changeHandler, dialog);
+        } else {
+            userExist.open();
+        }
     }
 
     @Override
     public void update() {
-
+        if(!email.getValue().equals(userDto.getEmail()) && client.isUserExist(email.getValue())) {
+            userExist.open();
+        } else {
+            client.updateUser(userDto);
+            setActions(userUpdateSuccessful, changeHandler, dialog);
+        }
     }
 
     @Override
     public void delete() {
-
+        client.deleteUser(userDto.getId());
+        setActions(userDeleteSuccessful, changeHandler, dialog);
     }
 
     public void editUser(UserDto u) {
@@ -141,6 +160,7 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
             dialog.open();
         }
 
+        password.setVisible(!persisted);
         save.setVisible(!persisted);
         update.setVisible(persisted);
         reset.setVisible(persisted);

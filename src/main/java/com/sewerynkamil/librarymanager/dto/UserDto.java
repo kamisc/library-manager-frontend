@@ -28,12 +28,12 @@ public class UserDto implements UserDetails {
     private String email;
     private Integer phoneNumber;
     private String password;
-    private Role role;
+    private String role;
 
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> list = new ArrayList<>();
-        list.add(new SimpleGrantedAuthority("ROLE_" + this.getRole().getRole()));
+        list.add(new SimpleGrantedAuthority("ROLE_" + this.getRole()));
         return list;
     }
 

@@ -291,6 +291,31 @@ public class LibraryManagerClient {
         return response.getBody();
     }
 
+    public void saveNewUser(UserDto userDto) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        Gson gson = new Gson();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String jsonContent = gson.toJson(userDto);
+        HttpEntity<String> request = new HttpEntity<>(jsonContent, headers);
+        restTemplate.postForObject("http://localhost:8080/v1/users", request, UserDto.class);
+    }
+
+    public void updateUser(UserDto userDto) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        Gson gson = new Gson();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String jsonContent = gson.toJson(userDto);
+        HttpEntity<String> request = new HttpEntity<>(jsonContent, headers);
+        restTemplate.put("http://localhost:8080/v1/users", request, UserDto.class);
+    }
+
+    public void deleteUser(Long id) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        restTemplate.exchange("http://localhost:8080/v1/users?id=" + id, HttpMethod.DELETE, request, Void.class, 1);
+    }
+
     public void setJwttoken(String jwttoken) {
         this.jwttoken = jwttoken;
     }
