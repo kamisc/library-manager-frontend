@@ -5,6 +5,7 @@ import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.dto.enumerated.Role;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
+import com.sewerynkamil.librarymanager.utils.StringIntegerConverter;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -15,6 +16,7 @@ import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,7 @@ public class RegistrationForm extends FormLayout implements KeyNotifier {
     private TextField name = new TextField("Name");
     private TextField surname = new TextField("Surname");
     private EmailField email = new EmailField("E-mail");
-    private NumberField phoneNumber = new NumberField("Phone number");
+    private TextField phoneNumber = new TextField("Phone number");
     private PasswordField password = new PasswordField("Password");
 
     private Button save = buttonFactory.createButton(ButtonType.SAVE, "Save", "225px");
@@ -45,6 +47,8 @@ public class RegistrationForm extends FormLayout implements KeyNotifier {
     private Notification userExist = new Notification("User with that e-mail already exist!", 3000);
     private Notification userSaveSuccessful = new Notification("The user has been added succesfully!", 3000);
     private Dialog dialog = new Dialog();
+
+    private Binder<UserDto> binder = new Binder<>();
 
     @Autowired
     public RegistrationForm(LibraryManagerClient client) {
@@ -61,11 +65,23 @@ public class RegistrationForm extends FormLayout implements KeyNotifier {
         phoneNumber.setWidth("225px");
         password.setWidth("225px");
 
-        name.setRequired(true);
-        surname.setRequired(true);
-        email.setRequiredIndicatorVisible(true);
-        phoneNumber.setRequiredIndicatorVisible(true);
-        password.setRequired(true);
+        binder.forField(name)
+                .asRequired("Required field")
+                .bind(UserDto::getName, UserDto::setName);
+        binder.forField(surname)
+                .asRequired("Required field")
+                .bind(UserDto::getSurname, UserDto::setSurname);
+        binder.forField(email)
+                .asRequired("Required field")
+                .bind(UserDto::getEmail, UserDto::setEmail);
+        binder.forField(phoneNumber)
+                .asRequired("Required field")
+                .withValidator(number -> number.length() == 9, "Invalid number (9 digits)")
+                .withConverter(new StringIntegerConverter())
+                .bind(UserDto::getPhoneNumber, UserDto::setPhoneNumber);
+        binder.forField(password)
+                .asRequired("Required field")
+                .bind(UserDto::getPassword, UserDto::setPassword);
 
         name.setClearButtonVisible(true);
         surname.setClearButtonVisible(true);
@@ -89,7 +105,7 @@ public class RegistrationForm extends FormLayout implements KeyNotifier {
         userDto.setName(name.getValue());
         userDto.setSurname(surname.getValue());
         userDto.setEmail(email.getValue());
-        userDto.setPhoneNumber(phoneNumber.getValue().intValue());
+        userDto.setPhoneNumber(Integer.parseInt(phoneNumber.getValue()));
         userDto.setPassword(password.getValue());
         userDto.setRole(Role.USER.getRole());
 
@@ -123,11 +139,6 @@ public class RegistrationForm extends FormLayout implements KeyNotifier {
 
     public final void createUser(UserDto u) {
         dialog.setCloseOnOutsideClick(false);
-
-        if (u == null) {
-            setVisible(false);
-            return;
-        }
 
         userDto = u;
 

@@ -52,7 +52,7 @@
 .my-account-user-details {
     width: 25%;
     align-items: center;
-    background-color: var(--lumo-shade-10pct);
+    background-color: var(--lumo-primary-color-10pct);
 }
 
 .my-account-user-rents {

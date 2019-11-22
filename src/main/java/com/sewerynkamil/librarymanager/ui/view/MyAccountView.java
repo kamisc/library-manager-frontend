@@ -72,7 +72,8 @@ public class MyAccountView extends VerticalLayout {
         myAccount.add(userDetails, userRents);
         myAccount.setClassName("my-account");
 
-        setTextFieldValues(userDto);
+        setFieldsValues(userDto);
+        setFieldsReadOnly();
 
         add(myAccount);
 
@@ -99,10 +100,17 @@ public class MyAccountView extends VerticalLayout {
         return username;
     }
 
-    private void setTextFieldValues(UserDto userDto) {
+    private void setFieldsValues(UserDto userDto) {
         name.setValue(userDto.getName());
         surname.setValue(userDto.getSurname());
         email.setValue(userDto.getEmail());
         phoneNumber.setValue(userDto.getPhoneNumber().toString());
+    }
+
+    private void setFieldsReadOnly() {
+        name.setReadOnly(true);
+        surname.setReadOnly(true);
+        email.setReadOnly(true);
+        phoneNumber.setReadOnly(true);
     }
 }
