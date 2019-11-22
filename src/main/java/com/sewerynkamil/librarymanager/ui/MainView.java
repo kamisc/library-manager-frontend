@@ -4,7 +4,7 @@ import com.sewerynkamil.librarymanager.security.SecurityUtils;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
 import com.sewerynkamil.librarymanager.ui.view.AudiobookView;
 import com.sewerynkamil.librarymanager.ui.view.BookView;
-import com.sewerynkamil.librarymanager.ui.view.UserAccountView;
+import com.sewerynkamil.librarymanager.ui.view.MyAccountView;
 import com.sewerynkamil.librarymanager.ui.view.UserView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
@@ -13,6 +13,7 @@ import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabVariant;
@@ -60,7 +61,7 @@ public class MainView extends AppLayout {
 
         tabs.add(createTab(VaadinIcon.OPEN_BOOK, LibraryConst.TITLE_BOOKS, BookView.class));
         tabs.add(createTab(VaadinIcon.MUSIC, LibraryConst.TITLE_AUDIOBOOKS, AudiobookView.class));
-        tabs.add(createTab(VaadinIcon.USER_CARD, LibraryConst.TITLE_MY_ACCOUNT, UserAccountView.class));
+        tabs.add(createTab(VaadinIcon.USER_CARD, LibraryConst.TITLE_MY_ACCOUNT, MyAccountView.class));
 
         if(SecurityUtils.isAccessGranted(UserView.class)) {
             tabs.add(createTab(VaadinIcon.USERS, "Users", UserView.class));

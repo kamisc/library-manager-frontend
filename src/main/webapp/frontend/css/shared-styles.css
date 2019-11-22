@@ -48,3 +48,25 @@
 .login-author {
     color: white;
 }
+
+.my-account-user-details {
+    width: 25%;
+    align-items: center;
+    background-color: var(--lumo-shade-10pct);
+}
+
+.my-account-user-rents {
+    width: 75%;
+    background-color: white;
+    margin-left: 0px;
+}
+
+.my-account {
+    border-style: solid;
+    border-width: 2px;
+    border-color: var(--lumo-primary-color);
+    border-radius: 1px;
+    align-items: center;
+    width: 100%;
+    box-shadow: 5px 5px 10px grey;
+}
