@@ -7,6 +7,7 @@ import com.sewerynkamil.librarymanager.ui.MainView;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
+import com.sewerynkamil.librarymanager.ui.view.form.MyAccountForm;
 import com.sewerynkamil.librarymanager.ui.view.form.UserForm;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -51,14 +52,13 @@ public class MyAccountView extends VerticalLayout {
     private TextField surname = new TextField("Surame");
     private EmailField email = new EmailField("E-mail");
     private TextField phoneNumber = new TextField("Phone number");
-    private PasswordField password = new PasswordField("Password");
 
-    private UserForm userForm;
+    private MyAccountForm myAccountForm;
 
     @Autowired
-    public MyAccountView(LibraryManagerClient client, UserForm userForm) {
+    public MyAccountView(LibraryManagerClient client, MyAccountForm myAccountForm) {
         this.client = client;
-        this.userForm = userForm;
+        this.myAccountForm = myAccountForm;
         userDto = getCurrentUser(client);
 
         setAlignItems(Alignment.CENTER);
@@ -77,12 +77,12 @@ public class MyAccountView extends VerticalLayout {
 
         add(myAccount);
 
-        userForm.setChangeHandler(() -> {
-            userForm.setVisible(false);
+        myAccountForm.setChangeHandler(() -> {
+            myAccountForm.setVisible(false);
             UI.getCurrent().getPage().reload();
         });
 
-        editMyUserDataButton.addClickListener(e -> userForm.editUser(userDto));
+        editMyUserDataButton.addClickListener(e -> myAccountForm.editUser(userDto));
     }
 
     private UserDto getCurrentUser(LibraryManagerClient libraryManagerClient) {
