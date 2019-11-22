@@ -63,6 +63,8 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
 
     private Binder<UserDto> binder = new Binder<>(UserDto.class);
 
+    private String oldEmail;
+
     @Autowired
     public UserForm(LibraryManagerClient client) {
         this.client = client;
@@ -98,6 +100,12 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
                 .withValidator(number -> number.length() == 9, "Invalid number (9 digits)")
                 .withConverter(new StringIntegerConverter())
                 .bind(UserDto::getPhoneNumber, UserDto::setPhoneNumber);
+        binder.forField(password)
+                .asRequired("Required field")
+                .bind(UserDto::getPassword, UserDto::setPassword);
+        binder.forField(role)
+                .asRequired("Required field")
+                .bind(UserDto::getRole, UserDto::setRole);
 
         save.addClickListener(e -> save());
         update.addClickListener(e -> update());
@@ -110,13 +118,6 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
 
     @Override
     public void save() {
-        /*userDto.setName(name.getValue());
-        userDto.setSurname(surname.getValue());
-        userDto.setEmail(email.getValue());
-        userDto.setPhoneNumber(Integer.parseInt(phoneNumber.getValue()));*/
-        userDto.setPassword(password.getValue());
-        userDto.setRole(Role.USER.getRole());
-
         if(!client.isUserExist(email.getValue())) {
             client.saveNewUser(userDto);
             setActions(userSaveSuccessful, changeHandler, dialog);
@@ -127,7 +128,7 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
 
     @Override
     public void update() {
-        if(!email.getValue().equals(userDto.getEmail()) && client.isUserExist(email.getValue())) {
+        if(!email.getValue().equals(oldEmail) && client.isUserExist(email.getValue())) {
             userExist.open();
         } else {
             client.updateUser(userDto);
@@ -151,6 +152,8 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
         final boolean persisted = u.getId() != null;
         if(persisted) {
             userDto = client.getOneUserById(u.getId());
+
+            oldEmail = userDto.getEmail();
 
             dialog.add(this);
             dialog.open();
