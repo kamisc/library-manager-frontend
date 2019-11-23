@@ -9,6 +9,9 @@ import com.sewerynkamil.librarymanager.ui.components.ButtonType;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
 import com.sewerynkamil.librarymanager.ui.view.form.BookForm;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -37,6 +40,7 @@ public class BookView extends VerticalLayout {
 
     private Button addNewBookButton = buttonFactory.createButton(ButtonType.ADDBUTTON, "Add new book", "225px");
     private Grid<BookDto> grid = new Grid<>(BookDto.class);
+
     private TextField authorFilter = new TextField();
     private TextField titleFilter = new TextField();
     private TextField categoryFilter = new TextField();
@@ -46,11 +50,13 @@ public class BookView extends VerticalLayout {
     private HorizontalLayout editors = new HorizontalLayout(grid);
 
     private BookForm bookForm;
+    private SpecimenView specimenView;
 
     @Autowired
-    public BookView(LibraryManagerClient client, BookForm bookForm) {
+    public BookView(LibraryManagerClient client, BookForm bookForm, SpecimenView specimenView) {
         this.client = client;
         this.bookForm = bookForm;
+        this.specimenView = specimenView;
 
         editors.setSizeFull();
 
@@ -59,6 +65,7 @@ public class BookView extends VerticalLayout {
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
         grid.setColumns("author", "title", "category", "yearOfFirstPublication", "isbn");
         grid.getColumnByKey("author").setTextAlign(ColumnTextAlign.START);
+        grid.addComponentColumn(bookDto -> createSpecimenButton(grid, bookDto)).setHeader("Specimens");
 
         generateFilter(authorFilter, "Filter by author");
         authorFilter.addValueChangeListener(e -> {
@@ -128,5 +135,14 @@ public class BookView extends VerticalLayout {
         field.setPlaceholder(placeholder);
         field.setValueChangeMode(ValueChangeMode.EAGER);
         field.setClearButtonVisible(true);
+    }
+
+    private Button createSpecimenButton(Grid<BookDto> grid, BookDto bookDto) {
+        //@SuppressWarnings("unchecked")
+        Button button = new Button("Show specimens", clickEvent -> {
+            specimenView.showSpecimens();
+        });
+        button.addThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
+        return button;
     }
 }
