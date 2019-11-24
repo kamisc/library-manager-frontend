@@ -50,7 +50,7 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
         add(elements);
 
         grid.setWidth("820px");
-        grid.setColumns("id", "bookTitle", "publisher", "yearOfPublication", "status");
+        grid.setColumns("id", "publisher", "yearOfPublication", "status", "isbn");
         grid.getColumnByKey("id").setWidth("75px").setFlexGrow(0).setTextAlign(ColumnTextAlign.START);
 
         close.addClickListener(e -> dialog.close());

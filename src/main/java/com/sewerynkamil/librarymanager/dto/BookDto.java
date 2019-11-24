@@ -19,5 +19,4 @@ public class BookDto {
     private String title;
     private String category;
     private Integer yearOfFirstPublication;
-    private Long isbn;
 }

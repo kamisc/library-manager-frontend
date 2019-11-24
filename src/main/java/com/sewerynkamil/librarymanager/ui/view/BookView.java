@@ -63,7 +63,7 @@ public class BookView extends VerticalLayout {
         add(actions, editors);
 
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
-        grid.setColumns("author", "title", "category", "yearOfFirstPublication", "isbn");
+        grid.setColumns("author", "title", "category", "yearOfFirstPublication");
         grid.getColumnByKey("author").setTextAlign(ColumnTextAlign.START);
         grid.addComponentColumn(bookDto -> createSpecimenButton(grid, bookDto)).setHeader("Specimens");
 

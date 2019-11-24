@@ -19,4 +19,5 @@ public class SpecimenDto {
     private String publisher;
     private Integer yearOfPublication;
     private String bookTitle;
+    private Long isbn;
 }
