@@ -140,7 +140,7 @@ public class BookView extends VerticalLayout {
     private Button createSpecimenButton(Grid<BookDto> grid, BookDto bookDto) {
         //@SuppressWarnings("unchecked")
         Button button = new Button("Show specimens", clickEvent -> {
-            specimenView.showSpecimens();
+            specimenView.showSpecimens(bookDto.getId());
         });
         button.addThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
         return button;

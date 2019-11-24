@@ -70,3 +70,8 @@
     width: 100%;
     box-shadow: 5px 5px 10px grey;
 }
+
+.specimen-view-book-title {
+    font-weight: bold;
+    margin: 0;
+}

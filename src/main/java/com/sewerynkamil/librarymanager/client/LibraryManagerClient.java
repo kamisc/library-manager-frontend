@@ -1,10 +1,7 @@
 package com.sewerynkamil.librarymanager.client;
 
 import com.google.gson.Gson;
-import com.sewerynkamil.librarymanager.dto.BookDto;
-import com.sewerynkamil.librarymanager.dto.RequestJwtDto;
-import com.sewerynkamil.librarymanager.dto.UserDto;
-import com.sewerynkamil.librarymanager.dto.WolneLekturyAudiobookDto;
+import com.sewerynkamil.librarymanager.dto.*;
 import com.sewerynkamil.librarymanager.dto.enumerated.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -314,6 +311,32 @@ public class LibraryManagerClient {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         restTemplate.exchange("http://localhost:8080/v1/users?id=" + id, HttpMethod.DELETE, request, Void.class, 1);
+    }
+
+    public List<SpecimenDto> getAllSpecimensForOneBook(Long bookId) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<SpecimenDto[]> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/specimens?bookId=" + bookId,
+                        HttpMethod.GET,
+                        request,
+                        SpecimenDto[].class);
+        List<SpecimenDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
+    }
+
+    public List<SpecimenDto> getAllAvailableSpecimensForOneBook(String status, Long bookId) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<SpecimenDto[]> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/specimens/" + bookId + "?status=" + status,
+                        HttpMethod.GET,
+                        request,
+                        SpecimenDto[].class);
+        List<SpecimenDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
     }
 
     public void setJwttoken(String jwttoken) {
