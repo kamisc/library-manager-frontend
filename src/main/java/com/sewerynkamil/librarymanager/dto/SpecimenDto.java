@@ -20,4 +20,8 @@ public class SpecimenDto {
     private Integer yearOfPublication;
     private String bookTitle;
     private Long isbn;
+
+    public SpecimenDto(String bookTitle) {
+        this.bookTitle = bookTitle;
+    }
 }

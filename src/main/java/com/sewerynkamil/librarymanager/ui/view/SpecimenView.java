@@ -1,12 +1,14 @@
 package com.sewerynkamil.librarymanager.ui.view;
 
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
+import com.sewerynkamil.librarymanager.dto.BookDto;
 import com.sewerynkamil.librarymanager.dto.SpecimenDto;
 import com.sewerynkamil.librarymanager.dto.enumerated.Status;
 import com.sewerynkamil.librarymanager.security.SecurityUtils;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
 import com.sewerynkamil.librarymanager.ui.view.form.BookForm;
+import com.sewerynkamil.librarymanager.ui.view.form.SpecimenForm;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -21,6 +23,9 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Author Kamil Seweryn
  */
@@ -31,6 +36,7 @@ import org.springframework.security.access.annotation.Secured;
 public class SpecimenView extends FormLayout implements KeyNotifier {
     private LibraryManagerClient client;
     private ButtonFactory buttonFactory = new ButtonFactory();
+    private BookDto bookDto;
 
     private Grid<SpecimenDto> grid = new Grid<>(SpecimenDto.class);
     private VerticalLayout elements = new VerticalLayout();
@@ -42,9 +48,15 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
 
     private Label bookTitle = new Label();
 
+    public String title = "";
+    public Long id;
+
+    private SpecimenForm specimenForm;
+
     @Autowired
-    public SpecimenView(LibraryManagerClient client) {
+    public SpecimenView(LibraryManagerClient client, SpecimenForm specimenForm) {
         this.client = client;
+        this.specimenForm = specimenForm;
 
         bookTitle.setClassName("specimen-view-book-title");
         add(elements);
@@ -53,30 +65,44 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
         grid.setColumns("id", "publisher", "yearOfPublication", "status", "isbn");
         grid.getColumnByKey("id").setWidth("75px").setFlexGrow(0).setTextAlign(ColumnTextAlign.START);
 
+        if(SecurityUtils.isAccessGranted(SpecimenForm.class)) {
+            grid.asSingleSelect().addValueChangeListener(e -> {
+                specimenForm.editSpecimen(e.getValue());
+            });
+
+            specimenForm.setChangeHandler(() -> {
+                specimenForm.setVisible(false);
+                showSpecimens(id);
+            });
+
+            addNewSpecimenButton.addClickListener(e -> specimenForm.editSpecimen(new SpecimenDto(title)));
+        }
+
         close.addClickListener(e -> dialog.close());
 
         setVisible(false);
     }
 
     public void showSpecimens(Long bookId) {
+        id = client.getOneBook(bookId).getId();
+        title = client.getOneBook(bookId).getTitle();
         bookTitle.setText(client.getOneBook(bookId).getTitle());
 
+        getSpecimens(bookId);
+        dialog.add(this);
+        dialog.open();
+        setVisible(true);
+    }
+
+    public void getSpecimens(Long bookId) {
         if(SecurityUtils.isAccessGranted(BookForm.class)) {
+            grid.setItems(client.getAllSpecimensForOneBook(bookId));
             grid.setHeight("370px");
             elements.remove(close);
             elements.add(bookTitle, grid, addNewSpecimenButton, close);
-
-            grid.setItems(client.getAllSpecimensForOneBook(bookId));
-            dialog.add(this);
-            dialog.open();
-            setVisible(true);
         } else {
             elements.add(bookTitle, grid, close);
-
             grid.setItems(client.getAllAvailableSpecimensForOneBook(Status.AVAILABLE.getStatus(), bookId));
-            dialog.add(this);
-            dialog.open();
-            setVisible(true);
         }
     }
 }

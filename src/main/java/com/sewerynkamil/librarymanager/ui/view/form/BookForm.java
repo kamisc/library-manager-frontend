@@ -44,7 +44,6 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
     private TextField title = new TextField("Title");
     private ComboBox<String> category = new ComboBox<>("Category");
     private TextField yearOfFirstPublication = new TextField("First publication");
-    // private TextField isbn = new TextField("ISBN");
 
     private Button save = buttonFactory.createButton(ButtonType.SAVE, "Save", "225px");
     private Button update = buttonFactory.createButton(ButtonType.UPDATE, "Update", "225px");
@@ -97,11 +96,6 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
                 .withConverter(new StringIntegerConverter())
                 .withValidator(year -> year >= 1600 && year <= LocalDate.now().getYear(), "Dosen't look like a year")
                 .bind(BookDto::getYearOfFirstPublication, BookDto::setYearOfFirstPublication);
-        /*binder.forField(isbn)
-                .asRequired("Required field")
-                .withValidator(isbn -> isbn.length() >= 10 && isbn.length() <= 13, "Invalid ISBN")
-                .withConverter(new StringLongConverter())
-                .bind(BookDto::getIsbn, BookDto::setIsbn);*/
 
         save.addClickListener(e -> save());
         update.addClickListener(e -> update());

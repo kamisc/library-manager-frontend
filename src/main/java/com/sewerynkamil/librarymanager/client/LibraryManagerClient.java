@@ -339,6 +339,43 @@ public class LibraryManagerClient {
         return responseList;
     }
 
+    public SpecimenDto getOneSpecimen(Long id) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<SpecimenDto> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/specimens/get/" + id,
+                        HttpMethod.GET,
+                        request,
+                        SpecimenDto.class);
+        return response.getBody();
+    }
+
+    public void saveNewSpecimen(SpecimenDto specimenDto) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        Gson gson = new Gson();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String jsonContent = gson.toJson(specimenDto);
+        HttpEntity<String> request = new HttpEntity<>(jsonContent, headers);
+        restTemplate.postForObject("http://localhost:8080/v1/specimens", request, SpecimenDto.class);
+    }
+
+    public void updateSpecimen(SpecimenDto specimenDto) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        Gson gson = new Gson();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String jsonContent = gson.toJson(specimenDto);
+        HttpEntity<String> request = new HttpEntity<>(jsonContent, headers);
+        restTemplate.put("http://localhost:8080/v1/specimens", request, SpecimenDto.class);
+    }
+
+    public void deleteSpecimen(Long id) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        restTemplate.exchange("http://localhost:8080/v1/specimens?id=" + id, HttpMethod.DELETE, request, Void.class, 1);
+    }
+
     public void setJwttoken(String jwttoken) {
         this.jwttoken = jwttoken;
     }
