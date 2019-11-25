@@ -3,6 +3,7 @@ package com.sewerynkamil.librarymanager.ui.view;
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
 import com.sewerynkamil.librarymanager.dto.BookDto;
 import com.sewerynkamil.librarymanager.dto.SpecimenDto;
+import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.dto.enumerated.Status;
 import com.sewerynkamil.librarymanager.security.SecurityUtils;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
@@ -23,6 +24,8 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +40,7 @@ import java.util.List;
 public class SpecimenView extends FormLayout implements KeyNotifier {
     private LibraryManagerClient client;
     private ButtonFactory buttonFactory = new ButtonFactory();
+    private UserDto userDto;
 
     private Grid<SpecimenDto> grid = new Grid<>(SpecimenDto.class);
     private VerticalLayout elements = new VerticalLayout();
@@ -57,6 +61,7 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
     public SpecimenView(LibraryManagerClient client, SpecimenForm specimenForm) {
         this.client = client;
         this.specimenForm = specimenForm;
+        userDto = getCurrentUser(client);
 
         bookTitle.setClassName("specimen-view-book-title");
         add(elements);
@@ -76,6 +81,10 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
             });
 
             addNewSpecimenButton.addClickListener(e -> specimenForm.editSpecimen(new SpecimenDto(title)));
+        }
+
+        if(!SecurityUtils.isAccessGranted(SpecimenForm.class)) {
+            grid.addComponentColumn(specimenDto -> createRentButton(grid, specimenDto, userDto));
         }
 
         close.addClickListener(e -> dialog.close());
@@ -103,16 +112,31 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
         } else {
             elements.add(bookTitle, grid, close);
             grid.setItems(client.getAllAvailableSpecimensForOneBook(Status.AVAILABLE.getStatus(), bookId));
-            grid.addComponentColumn(specimenDto -> createRentButton(grid, specimenDto));
         }
     }
 
-    private Button createRentButton(Grid<SpecimenDto> grid, SpecimenDto specimenDto) {
+    private Button createRentButton(Grid<SpecimenDto> grid, SpecimenDto specimenDto, UserDto userDto) {
         //@SuppressWarnings("unchecked")
         Button button = new Button("Rent this book", clickEvent -> {
-
+            client.rentBook(specimenDto.getId(), userDto.getId());
+            dialog.close();
         });
         button.addThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
         return button;
+    }
+
+    private UserDto getCurrentUser(LibraryManagerClient client) {
+        return client.getOneUserByEmail(getPrincipalUsername());
+    }
+
+    private String getPrincipalUsername() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails)principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+        return username;
     }
 }

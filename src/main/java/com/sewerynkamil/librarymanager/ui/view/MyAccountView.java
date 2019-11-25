@@ -2,6 +2,8 @@ package com.sewerynkamil.librarymanager.ui.view;
 
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
 import com.sewerynkamil.librarymanager.dto.BookDto;
+import com.sewerynkamil.librarymanager.dto.RentDto;
+import com.sewerynkamil.librarymanager.dto.SpecimenDto;
 import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.ui.MainView;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
@@ -11,6 +13,7 @@ import com.sewerynkamil.librarymanager.ui.view.form.MyAccountForm;
 import com.sewerynkamil.librarymanager.ui.view.form.UserForm;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -48,6 +51,8 @@ public class MyAccountView extends VerticalLayout {
 
     private HorizontalLayout myAccount = new HorizontalLayout();
 
+    private Grid<RentDto> grid = new Grid<>(RentDto.class);
+
     private TextField name = new TextField("Name");
     private TextField surname = new TextField("Surame");
     private EmailField email = new EmailField("E-mail");
@@ -63,7 +68,12 @@ public class MyAccountView extends VerticalLayout {
 
         setAlignItems(Alignment.CENTER);
 
+        grid.setItems(client.getAllRentsByUserId(userDto.getId()));
+        grid.setColumns("rentId", "specimenId", "bookTitle", "rentDate", "returnDate");
+        grid.addComponentColumn(rentDto -> createProlongationButton(grid, rentDto, userDto));
+
         userRents.setClassName("my-account-user-rents");
+        userRents.add(grid);
 
         userDetails.setClassName("my-account-user-details");
         userDetails.setWidth("25%");
@@ -85,8 +95,8 @@ public class MyAccountView extends VerticalLayout {
         editMyUserDataButton.addClickListener(e -> myAccountForm.editUser(userDto));
     }
 
-    private UserDto getCurrentUser(LibraryManagerClient libraryManagerClient) {
-        return libraryManagerClient.getOneUserByEmail(getPrincipalUsername());
+    private UserDto getCurrentUser(LibraryManagerClient client) {
+        return client.getOneUserByEmail(getPrincipalUsername());
     }
 
     private String getPrincipalUsername() {
@@ -112,5 +122,15 @@ public class MyAccountView extends VerticalLayout {
         surname.setReadOnly(true);
         email.setReadOnly(true);
         phoneNumber.setReadOnly(true);
+    }
+
+    private Button createProlongationButton(Grid<RentDto> grid, RentDto rentDto, UserDto userDto) {
+        //@SuppressWarnings("unchecked")
+        Button button = new Button("Prolongate rent", clickEvent -> {
+            client.prolongationRent(rentDto.getSpecimenId(), userDto.getId());
+            grid.setItems(client.getAllRentsByUserId(userDto.getId()));
+        });
+        button.addThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
+        return button;
     }
 }

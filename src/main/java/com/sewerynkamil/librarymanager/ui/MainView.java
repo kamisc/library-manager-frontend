@@ -2,10 +2,7 @@ package com.sewerynkamil.librarymanager.ui;
 
 import com.sewerynkamil.librarymanager.security.SecurityUtils;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
-import com.sewerynkamil.librarymanager.ui.view.AudiobookView;
-import com.sewerynkamil.librarymanager.ui.view.BookView;
-import com.sewerynkamil.librarymanager.ui.view.MyAccountView;
-import com.sewerynkamil.librarymanager.ui.view.UserView;
+import com.sewerynkamil.librarymanager.ui.view.*;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -65,6 +62,7 @@ public class MainView extends AppLayout {
 
         if(SecurityUtils.isAccessGranted(UserView.class)) {
             tabs.add(createTab(VaadinIcon.USERS, "Users", UserView.class));
+            tabs.add(createTab(VaadinIcon.COMPILE, LibraryConst.TITLE_RENTS, RentView.class));
         }
 
         final String contextPath = VaadinServlet.getCurrent().getServletContext().getContextPath();

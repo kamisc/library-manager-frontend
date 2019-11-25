@@ -376,6 +376,92 @@ public class LibraryManagerClient {
         restTemplate.exchange("http://localhost:8080/v1/specimens?id=" + id, HttpMethod.DELETE, request, Void.class, 1);
     }
 
+    public List<RentDto> getAllRentsWithLazyLoading(int offset, int limit) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<RentDto[]> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/rents?offset=" + offset + "&limit=" + limit,
+                        HttpMethod.GET,
+                        request,
+                        RentDto[].class);
+        List<RentDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
+    }
+
+    public List<RentDto> getAllRentsByUserId(Long userId) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<RentDto[]> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/rents/user/" + userId,
+                        HttpMethod.GET,
+                        request,
+                        RentDto[].class);
+        List<RentDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
+    }
+
+    public List<RentDto> getAllRentsByBookTitleStartsWithIgnoreCase(String bookTitle) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<RentDto[]> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/rents/titles/" + bookTitle,
+                        HttpMethod.GET,
+                        request,
+                        RentDto[].class);
+        List<RentDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
+    }
+
+    public List<RentDto> getAllRentsByUserEmailStartsWithIgnoreCase(String email) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<RentDto[]> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/rents/emails/" + email,
+                        HttpMethod.GET,
+                        request,
+                        RentDto[].class);
+        List<RentDto> responseList = Arrays.asList(response.getBody());
+        return responseList;
+    }
+
+
+    public Long countRents() {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<Long> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/rents/count",
+                        HttpMethod.GET,
+                        request,
+                        Long.class);
+        return response.getBody();
+    }
+
+    public void rentBook(Long specimenId, Long userId) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        restTemplate.postForObject("http://localhost:8080/v1/rents/" + userId + "?specimenId=" + specimenId, request, RentDto.class);
+    }
+
+    public void prolongationRent(Long specimenId, Long userId) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        restTemplate.put("http://localhost:8080/v1/rents/" + userId + "?specimenId=" + specimenId, request, BookDto.class);
+    }
+
+    public void returnBook(Long id) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        restTemplate.exchange("http://localhost:8080/v1/rents?id=" + id, HttpMethod.DELETE, request, Void.class, 1);
+    }
+
     public void setJwttoken(String jwttoken) {
         this.jwttoken = jwttoken;
     }
