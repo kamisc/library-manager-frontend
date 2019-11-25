@@ -65,7 +65,7 @@ public class BookView extends VerticalLayout {
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
         grid.setColumns("author", "title", "category", "yearOfFirstPublication");
         grid.getColumnByKey("author").setTextAlign(ColumnTextAlign.START);
-        grid.addComponentColumn(bookDto -> createSpecimenButton(grid, bookDto)).setHeader("Specimens");
+        grid.addComponentColumn(bookDto -> createSpecimenButton(grid, bookDto));
 
         generateFilter(authorFilter, "Filter by author");
         authorFilter.addValueChangeListener(e -> {

@@ -11,6 +11,7 @@ import com.sewerynkamil.librarymanager.ui.view.form.BookForm;
 import com.sewerynkamil.librarymanager.ui.view.form.SpecimenForm;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
@@ -36,7 +37,6 @@ import java.util.List;
 public class SpecimenView extends FormLayout implements KeyNotifier {
     private LibraryManagerClient client;
     private ButtonFactory buttonFactory = new ButtonFactory();
-    private BookDto bookDto;
 
     private Grid<SpecimenDto> grid = new Grid<>(SpecimenDto.class);
     private VerticalLayout elements = new VerticalLayout();
@@ -61,7 +61,7 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
         bookTitle.setClassName("specimen-view-book-title");
         add(elements);
 
-        grid.setWidth("820px");
+        grid.setWidth("840px");
         grid.setColumns("id", "publisher", "yearOfPublication", "status", "isbn");
         grid.getColumnByKey("id").setWidth("75px").setFlexGrow(0).setTextAlign(ColumnTextAlign.START);
 
@@ -103,6 +103,16 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
         } else {
             elements.add(bookTitle, grid, close);
             grid.setItems(client.getAllAvailableSpecimensForOneBook(Status.AVAILABLE.getStatus(), bookId));
+            grid.addComponentColumn(specimenDto -> createRentButton(grid, specimenDto));
         }
+    }
+
+    private Button createRentButton(Grid<SpecimenDto> grid, SpecimenDto specimenDto) {
+        //@SuppressWarnings("unchecked")
+        Button button = new Button("Rent this book", clickEvent -> {
+
+        });
+        button.addThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
+        return button;
     }
 }
