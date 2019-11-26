@@ -57,6 +57,7 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
     private Notification bookSaveSuccessful = new Notification("The book has been added succesfully!", 3000);
     private Notification bookUpdateSuccessful = new Notification("The book has been updated succesfully!", 3000);
     private Notification bookDeleteSuccessful = new Notification("The book has been deleted succesfully!", 3000);
+    private Notification bookCantDelelete = new Notification("You can't delete this book, \nbeacause it is on rent!", 3000);
     private Dialog dialog = new Dialog();
 
     private Binder<BookDto> binder = new Binder<>(BookDto.class);
@@ -69,6 +70,7 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
         bookSaveSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         bookUpdateSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         bookDeleteSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        bookCantDelelete.addThemeVariants(NotificationVariant.LUMO_ERROR);
 
         category.setItems(Category.categoryList());
         category.setPlaceholder("Select category");
@@ -130,8 +132,12 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
 
     @Override
     public void delete() {
-        client.deleteBook(bookDto.getId());
-        setActions(bookDeleteSuccessful, changeHandler, dialog);
+        if(client.isRentExist(bookDto.getTitle())) {
+            bookCantDelelete.open();
+        } else {
+            client.deleteBook(bookDto.getId());
+            setActions(bookDeleteSuccessful, changeHandler, dialog);
+        }
     }
 
     public final void editBook(BookDto b) {

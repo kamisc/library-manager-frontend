@@ -441,6 +441,18 @@ public class LibraryManagerClient {
         return response.getBody();
     }
 
+    public boolean isRentExist(String title) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<Boolean> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/rents/exist/" + title,
+                        HttpMethod.GET,
+                        request,
+                        Boolean.class);
+        return response.getBody();
+    }
+
     public void rentBook(Long specimenId, Long userId) {
         headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
         headers.setContentType(MediaType.APPLICATION_JSON);
