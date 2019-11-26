@@ -17,7 +17,8 @@ import static java.util.stream.Collectors.toList;
 public enum Status {
     AVAILABLE("Available"),
     RENTED("Rented"),
-    LOST("Lost");
+    LOST("Lost"),
+    UNAVAILABLE("Unavailable");
 
     String status;
 
