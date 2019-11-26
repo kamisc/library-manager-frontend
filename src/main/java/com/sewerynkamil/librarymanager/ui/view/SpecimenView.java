@@ -18,6 +18,8 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -48,6 +50,9 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
     private Button addNewSpecimenButton = buttonFactory.createButton(ButtonType.ADDBUTTON, "Add new specimen", "820px");
     private Button close = buttonFactory.createButton(ButtonType.CLOSE, "Close", "820px");
 
+    private Notification rentSuccessful = new Notification("The book has been rented succesfully!", 3000);
+
+
     private Dialog dialog = new Dialog();
 
     private Label bookTitle = new Label();
@@ -62,6 +67,8 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
         this.client = client;
         this.specimenForm = specimenForm;
         userDto = getCurrentUser(client);
+
+        rentSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
         bookTitle.setClassName("specimen-view-book-title");
         add(elements);
@@ -120,6 +127,7 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
         Button button = new Button("Rent this book", clickEvent -> {
             client.rentBook(specimenDto.getId(), userDto.getId());
             dialog.close();
+            rentSuccessful.open();
         });
         button.addThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
         return button;
