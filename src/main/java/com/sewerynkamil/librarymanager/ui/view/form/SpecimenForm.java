@@ -55,6 +55,7 @@ public class SpecimenForm extends FormLayout implements KeyNotifier, FormActions
     private Notification specimenSaveSuccessful = new Notification("The specimen has been added succesfully!", 3000);
     private Notification specimenUpdateSuccessful = new Notification("The specimen has been updated succesfully!", 3000);
     private Notification specimenDeleteSuccessful = new Notification("The specimen has been deleted succesfully!", 3000);
+    private Notification specimenCantDelete = new Notification("You can't delete this specimen, beacause it is on rent!", 3000);
     private Dialog dialog = new Dialog();
 
     private Binder<SpecimenDto> binder = new Binder<>(SpecimenDto.class);
@@ -68,6 +69,7 @@ public class SpecimenForm extends FormLayout implements KeyNotifier, FormActions
         specimenSaveSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         specimenUpdateSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         specimenDeleteSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        specimenCantDelete.addThemeVariants(NotificationVariant.LUMO_ERROR);
 
         status.setItems(Status.statusList());
         status.setPlaceholder("Select status");
@@ -126,8 +128,12 @@ public class SpecimenForm extends FormLayout implements KeyNotifier, FormActions
 
     @Override
     public void delete() {
-        client.deleteSpecimen(specimenDto.getId());
-        setActions(specimenDeleteSuccessful, changeHandler, dialog);
+        if(client.isRentExist(specimenDto.getBookTitle())) {
+            specimenCantDelete.open();
+        } else {
+            client.deleteSpecimen(specimenDto.getId());
+            setActions(specimenDeleteSuccessful, changeHandler, dialog);
+        }
     }
 
     public final void editSpecimen(SpecimenDto s) {
