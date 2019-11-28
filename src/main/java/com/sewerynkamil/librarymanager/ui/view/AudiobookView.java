@@ -1,7 +1,7 @@
 package com.sewerynkamil.librarymanager.ui.view;
 
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
-import com.sewerynkamil.librarymanager.dto.WolneLekturyAudiobookDto;
+import com.sewerynkamil.librarymanager.dto.wolnelektury.WolneLekturyAudiobookDto;
 import com.sewerynkamil.librarymanager.ui.MainView;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
 import com.vaadin.flow.component.grid.ColumnTextAlign;

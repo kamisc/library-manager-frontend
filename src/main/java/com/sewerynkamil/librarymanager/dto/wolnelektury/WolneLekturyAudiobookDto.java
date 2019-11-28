@@ -1,4 +1,4 @@
-package com.sewerynkamil.librarymanager.dto;
+package com.sewerynkamil.librarymanager.dto.wolnelektury;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

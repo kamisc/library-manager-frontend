@@ -2,7 +2,7 @@ package com.sewerynkamil.librarymanager.client;
 
 import com.google.gson.Gson;
 import com.sewerynkamil.librarymanager.dto.*;
-import com.sewerynkamil.librarymanager.dto.enumerated.Role;
+import com.sewerynkamil.librarymanager.dto.wolnelektury.WolneLekturyAudiobookDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -203,6 +203,8 @@ public class LibraryManagerClient {
                         Integer.class);
         return response.getBody();
     }
+
+
 
     public List<UserDto> getAllUsersWithLazyLoading(int offset, int limit) {
         headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
