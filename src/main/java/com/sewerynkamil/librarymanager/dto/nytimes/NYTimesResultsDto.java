@@ -18,4 +18,5 @@ public class NYTimesResultsDto {
     private String title;
     private String url;
     private String byline;
+    private String published_date;
 }

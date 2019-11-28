@@ -29,22 +29,20 @@ public class TopStoriesView extends VerticalLayout {
 
     private ComboBox<String> section = new ComboBox<>("Section");
 
-    HorizontalLayout editors = new HorizontalLayout(section, grid);
 
     @Autowired
     public TopStoriesView(LibraryManagerClient client) {
         this.client = client;
 
-        editors.setSizeFull();
+        setSizeFull();
 
-        add(editors);
+        add(section, grid);
+
+        grid.setColumns("byline", "title", "published_date", "url");
 
         section.setItems(NYTimesSection.sectionList());
         section.setPlaceholder("Select section");
         section.setClearButtonVisible(true);
-
-
-
         section.addValueChangeListener(e -> getTopStories(e.getValue()));
 
         getTopStories(section.getValue());
