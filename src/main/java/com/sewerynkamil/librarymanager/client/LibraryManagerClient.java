@@ -2,6 +2,7 @@ package com.sewerynkamil.librarymanager.client;
 
 import com.google.gson.Gson;
 import com.sewerynkamil.librarymanager.dto.*;
+import com.sewerynkamil.librarymanager.dto.nytimes.NYTimesTopStoriesDto;
 import com.sewerynkamil.librarymanager.dto.wolnelektury.WolneLekturyAudiobookDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -204,7 +205,17 @@ public class LibraryManagerClient {
         return response.getBody();
     }
 
-
+    public NYTimesTopStoriesDto getAllTopStoriesBySection(String section) {
+        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<NYTimesTopStoriesDto> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/topstories/" + section,
+                        HttpMethod.GET,
+                        request,
+                        NYTimesTopStoriesDto.class);
+        return response.getBody();
+    }
 
     public List<UserDto> getAllUsersWithLazyLoading(int offset, int limit) {
         headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
