@@ -58,6 +58,7 @@ public class MainView extends AppLayout {
 
         tabs.add(createTab(VaadinIcon.OPEN_BOOK, LibraryConst.TITLE_BOOKS, BookView.class));
         tabs.add(createTab(VaadinIcon.MUSIC, LibraryConst.TITLE_AUDIOBOOKS, AudiobookView.class));
+        tabs.add(createTab(VaadinIcon.NEWSPAPER, LibraryConst.TITLE_TOP_STORIES, TopStoriesView.class));
         tabs.add(createTab(VaadinIcon.USER_CARD, LibraryConst.TITLE_MY_ACCOUNT, MyAccountView.class));
 
         if(SecurityUtils.isAccessGranted(UserView.class)) {

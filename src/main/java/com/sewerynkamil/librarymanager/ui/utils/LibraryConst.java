@@ -11,6 +11,7 @@ public class LibraryConst {
     public static final String ROUTE_USERS = "users";
     public static final String ROUTE_MY_ACCOUNT = "myAccount";
     public static final String ROUTE_RENTS = "rents";
+    public static final String ROUTE_TOP_STORIES = "topStories";
 
     public static final String TITLE_LOGIN = "Library Manager";
     public static final String TITLE_BOOKS = "Books";
@@ -19,6 +20,7 @@ public class LibraryConst {
     public static final String TITLE_MY_ACCOUNT = "My Account";
     public static final String TITLE_RENTS = "Rents";
     public static final String TITLE_LOGOUT = "Logout";
+    public static final String TITLE_TOP_STORIES = "Top Stories";
 
     public static final String VIEWPORT = "width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes, viewport-fit=cover";
 }
