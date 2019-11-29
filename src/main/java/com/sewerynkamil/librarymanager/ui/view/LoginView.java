@@ -59,6 +59,8 @@ public class LoginView extends VerticalLayout {
         this.registrationForm = registrationForm;
 
         setClassName("login");
+        add(login, registrationForm);
+        generateLoginListener(authenticationManager, client);
 
         loginI18n.getForm().setUsername("E-mail");
 
@@ -78,10 +80,6 @@ public class LoginView extends VerticalLayout {
 
         title.setClassName("login-title");
         author.setClassName("login-author");
-
-        add(login, registrationForm);
-
-        generateLoginListener(authenticationManager, client);
 
         registrationForm.setChangeHandler(() -> {
             registrationForm.setVisible(false);

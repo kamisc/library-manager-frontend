@@ -3,6 +3,7 @@ package com.sewerynkamil.librarymanager.ui.view;
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
 import com.sewerynkamil.librarymanager.dto.RentDto;
 import com.sewerynkamil.librarymanager.ui.MainView;
+import com.sewerynkamil.librarymanager.ui.components.ComponentDesigner;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -13,7 +14,6 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +28,7 @@ import org.springframework.security.access.annotation.Secured;
 @PageTitle(LibraryConst.TITLE_RENTS)
 @Secured("ROLE_Admin")
 public class RentView extends VerticalLayout {
+    private ComponentDesigner componentDesigner = new ComponentDesigner();
     private LibraryManagerClient client;
 
     private Grid<RentDto> grid = new Grid<>(RentDto.class);
@@ -42,15 +43,15 @@ public class RentView extends VerticalLayout {
         this.client = client;
 
         setSizeFull();
-
         add(grid);
+        rentList();
 
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
         grid.setColumns("rentId", "specimenId", "bookTitle", "userEmail", "rentDate", "returnDate");
         grid.getColumnByKey("rentId").setTextAlign(ColumnTextAlign.START);
         grid.addComponentColumn(rentDto -> createProlongationButton(rentDto));
 
-        generateFilter(bookTitleFiter, "Filter by book title");
+        componentDesigner.generateFilter(bookTitleFiter, "Filter by book title");
         bookTitleFiter.addValueChangeListener(e -> {
                     if (StringUtils.isBlank(e.getValue())) {
                         rentList();
@@ -60,7 +61,7 @@ public class RentView extends VerticalLayout {
                 }
         );
 
-        generateFilter(emailFilter, "Filter by user email");
+        componentDesigner.generateFilter(emailFilter, "Filter by user email");
         emailFilter.addValueChangeListener(e -> {
                     if (StringUtils.isBlank(e.getValue())) {
                         rentList();
@@ -72,8 +73,6 @@ public class RentView extends VerticalLayout {
 
         filterRow.getCell(grid.getColumnByKey("bookTitle")).setComponent(bookTitleFiter);
         filterRow.getCell(grid.getColumnByKey("userEmail")).setComponent(emailFilter);
-
-        rentList();
     }
 
     private void rentList() {
@@ -86,12 +85,6 @@ public class RentView extends VerticalLayout {
                 },
                 query -> client.countRents().intValue()
         ));
-    }
-
-    private void generateFilter(TextField field, String placeholder) {
-        field.setPlaceholder(placeholder);
-        field.setValueChangeMode(ValueChangeMode.EAGER);
-        field.setClearButtonVisible(true);
     }
 
     private Button createProlongationButton(RentDto rentDto) {

@@ -5,6 +5,7 @@ import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.dto.enumerated.Role;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
+import com.sewerynkamil.librarymanager.ui.components.ComponentDesigner;
 import com.sewerynkamil.librarymanager.ui.utils.StringIntegerConverter;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
@@ -31,6 +32,7 @@ import org.springframework.security.access.annotation.Secured;
 @Secured("ROLE_Admin")
 public class UserForm extends FormLayout implements KeyNotifier, FormActions {
     private ButtonFactory buttonFactory = new ButtonFactory();
+    private ComponentDesigner componentDesigner = new ComponentDesigner();
     private LibraryManagerClient client;
     private UserDto userDto;
 
@@ -63,24 +65,18 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
     public UserForm(LibraryManagerClient client) {
         this.client = client;
 
+        setSizeUndefined();
+        setWidth("260px");
+        add(name, surname, email, phoneNumber, password, role, save, update, reset, delete, close);
+        setVisible(false);
+
         userExist.addThemeVariants(NotificationVariant.LUMO_ERROR);
         userSaveSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         userUpdateSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         userDeleteSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
-        role.setItems(Role.roleList());
-        role.setPlaceholder("Select role");
-        role.setClearButtonVisible(true);
-        role.setRequired(true);
-        role.setErrorMessage("Required field");
-
-        setSizeUndefined();
-
-        setWidth("260px");
-
-        add(name, surname, email, phoneNumber, password, role, save, update, reset, delete, close);
-
-        setTextFieldsOptions(name, surname, phoneNumber);
+        componentDesigner.setComboboxOptions(Role.roleList(), "Select role", role);
+        componentDesigner.setTextFieldsOptions(name, surname, phoneNumber);
 
         binder.forField(name)
                 .asRequired("Required field")
@@ -108,15 +104,13 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
         delete.addClickListener(e -> delete());
         reset.addClickListener(e -> editUser(userDto));
         close.addClickListener(e -> dialog.close());
-
-        setVisible(false);
     }
 
     @Override
     public void save() {
         if(!client.isUserExist(email.getValue())) {
             client.saveNewUser(userDto);
-            setActions(userSaveSuccessful, changeHandler, dialog);
+            componentDesigner.setActions(userSaveSuccessful, changeHandler, dialog);
         } else {
             userExist.open();
         }
@@ -128,14 +122,14 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
             userExist.open();
         } else {
             client.updateUser(userDto);
-            setActions(userUpdateSuccessful, changeHandler, dialog);
+            componentDesigner.setActions(userUpdateSuccessful, changeHandler, dialog);
         }
     }
 
     @Override
     public void delete() {
         client.deleteUser(userDto.getId());
-        setActions(userDeleteSuccessful, changeHandler, dialog);
+        componentDesigner.setActions(userDeleteSuccessful, changeHandler, dialog);
     }
 
     public void editUser(UserDto u) {
@@ -171,19 +165,5 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
 
     public void setChangeHandler(ChangeHandler h) {
         this.changeHandler = h;
-    }
-
-    private void setActions(Notification success, ChangeHandler changeHandler, Dialog form) {
-        success.open();
-        changeHandler.onChange();
-        form.close();
-    }
-
-    private void setTextFieldsOptions(TextField... textFields) {
-        for(TextField t : textFields) {
-            t.setClearButtonVisible(true);
-            t.setRequired(true);
-            t.setErrorMessage("Required field");
-        }
     }
 }

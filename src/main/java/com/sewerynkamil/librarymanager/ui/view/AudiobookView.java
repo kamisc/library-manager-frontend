@@ -3,6 +3,7 @@ package com.sewerynkamil.librarymanager.ui.view;
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
 import com.sewerynkamil.librarymanager.dto.wolnelektury.WolneLekturyAudiobookDto;
 import com.sewerynkamil.librarymanager.ui.MainView;
+import com.sewerynkamil.librarymanager.ui.components.ComponentDesigner;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -14,7 +15,6 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +30,7 @@ import org.springframework.security.access.annotation.Secured;
 @Secured({"ROLE_User", "ROLE_Admin"})
 public class AudiobookView extends VerticalLayout {
     private LibraryManagerClient client;
+    private ComponentDesigner componentDesigner = new ComponentDesigner();
 
     private Grid<WolneLekturyAudiobookDto> grid = new Grid<>(WolneLekturyAudiobookDto.class);
 
@@ -42,15 +43,15 @@ public class AudiobookView extends VerticalLayout {
         this.client = client;
 
         setSizeFull();
-
         add(grid);
+        audiobookList();
 
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
         grid.setColumns("author", "title", "genre", "epoch");
         grid.getColumnByKey("author").setTextAlign(ColumnTextAlign.START);
         grid.addComponentColumn(audiobookDto -> createUrlButton(audiobookDto));
 
-        generateFilter(authorFilter, "Filter by author");
+        componentDesigner.generateFilter(authorFilter, "Filter by author");
         authorFilter.addValueChangeListener(e -> {
                 if (StringUtils.isBlank(e.getValue())) {
                     audiobookList();
@@ -60,7 +61,7 @@ public class AudiobookView extends VerticalLayout {
             }
         );
 
-        generateFilter(titleFilter, "Filter by title");
+        componentDesigner.generateFilter(titleFilter, "Filter by title");
         titleFilter.addValueChangeListener(e -> {
                 if (StringUtils.isBlank(e.getValue())) {
                     audiobookList();
@@ -72,8 +73,6 @@ public class AudiobookView extends VerticalLayout {
 
         filterRow.getCell(grid.getColumnByKey("title")).setComponent(titleFilter);
         filterRow.getCell(grid.getColumnByKey("author")).setComponent(authorFilter);
-
-        audiobookList();
     }
 
     private void audiobookList() {
@@ -85,12 +84,6 @@ public class AudiobookView extends VerticalLayout {
                 },
                 query -> client.countAudiobooks()
         ));
-    }
-
-    private void generateFilter(TextField field, String placeholder) {
-        field.setPlaceholder(placeholder);
-        field.setValueChangeMode(ValueChangeMode.EAGER);
-        field.setClearButtonVisible(true);
     }
 
     private Button createUrlButton(WolneLekturyAudiobookDto wolneLekturyAudiobookDto) {

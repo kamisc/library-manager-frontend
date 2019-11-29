@@ -5,6 +5,7 @@ import com.sewerynkamil.librarymanager.dto.BookDto;
 import com.sewerynkamil.librarymanager.dto.enumerated.Category;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
+import com.sewerynkamil.librarymanager.ui.components.ComponentDesigner;
 import com.sewerynkamil.librarymanager.ui.utils.StringIntegerConverter;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
@@ -31,6 +32,7 @@ import java.time.LocalDate;
 @Secured("ROLE_Admin")
 public class BookForm extends FormLayout implements KeyNotifier, FormActions {
     private ButtonFactory buttonFactory = new ButtonFactory();
+    private ComponentDesigner componentDesigner = new ComponentDesigner();
     private LibraryManagerClient client;
     private BookDto bookDto;
 
@@ -60,25 +62,19 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
     public BookForm(LibraryManagerClient client) {
         this.client = client;
 
+        setSizeUndefined();
+        setWidth("260px");
+        add(author, title, category, yearOfFirstPublication, save, update, reset, delete, close);
+        setVisible(false);
+
         bookExist.addThemeVariants(NotificationVariant.LUMO_ERROR);
         bookSaveSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         bookUpdateSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         bookDeleteSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         bookCantDelete.addThemeVariants(NotificationVariant.LUMO_ERROR);
 
-        category.setItems(Category.categoryList());
-        category.setPlaceholder("Select category");
-        category.setClearButtonVisible(true);
-        category.setRequired(true);
-        category.setErrorMessage("Required field");
-
-        setSizeUndefined();
-
-        setWidth("260px");
-
-        add(author, title, category, yearOfFirstPublication, save, update, reset, delete, close);
-
-        setTextFieldsOptions(author, title, yearOfFirstPublication);
+        componentDesigner.setComboboxOptions(Category.categoryList(), "Select category", category);
+        componentDesigner.setTextFieldsOptions(author, title, yearOfFirstPublication);
 
         binder.forField(author)
                 .asRequired("Required field")
@@ -100,15 +96,13 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
         delete.addClickListener(e -> delete());
         reset.addClickListener(e -> editBook(bookDto));
         close.addClickListener(e -> dialog.close());
-
-        setVisible(false);
     }
 
     @Override
     public void save() {
         if(!client.isBookExist(title.getValue())) {
             client.saveNewBook(bookDto);
-            setActions(bookSaveSuccessful, changeHandler, dialog);
+            componentDesigner.setActions(bookSaveSuccessful, changeHandler, dialog);
         } else {
             bookExist.open();
         }
@@ -120,7 +114,7 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
             bookExist.open();
         } else {
             client.updateBook(bookDto);
-            setActions(bookUpdateSuccessful, changeHandler, dialog);
+            componentDesigner.setActions(bookUpdateSuccessful, changeHandler, dialog);
         }
     }
 
@@ -130,7 +124,7 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
             bookCantDelete.open();
         } else {
             client.deleteBook(bookDto.getId());
-            setActions(bookDeleteSuccessful, changeHandler, dialog);
+            componentDesigner.setActions(bookDeleteSuccessful, changeHandler, dialog);
         }
     }
 
@@ -164,19 +158,5 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
 
     public void setChangeHandler(ChangeHandler h) {
         this.changeHandler = h;
-    }
-
-    private void setActions(Notification success, ChangeHandler changeHandler, Dialog form) {
-        success.open();
-        changeHandler.onChange();
-        form.close();
-    }
-
-    private void setTextFieldsOptions(TextField... textFields) {
-        for(TextField t : textFields) {
-            t.setClearButtonVisible(true);
-            t.setRequired(true);
-            t.setErrorMessage("Required field");
-        }
     }
 }

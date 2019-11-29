@@ -5,6 +5,7 @@ import com.sewerynkamil.librarymanager.dto.SpecimenDto;
 import com.sewerynkamil.librarymanager.dto.enumerated.Status;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
+import com.sewerynkamil.librarymanager.ui.components.ComponentDesigner;
 import com.sewerynkamil.librarymanager.ui.utils.StringIntegerConverter;
 import com.sewerynkamil.librarymanager.ui.utils.StringLongConverter;
 import com.vaadin.flow.component.KeyNotifier;
@@ -32,6 +33,7 @@ import java.time.LocalDate;
 @Secured("ROLE_Admin")
 public class SpecimenForm extends FormLayout implements KeyNotifier, FormActions {
     private ButtonFactory buttonFactory = new ButtonFactory();
+    private ComponentDesigner componentDesigner = new ComponentDesigner();
     private LibraryManagerClient client;
     private SpecimenDto specimenDto;
 
@@ -61,26 +63,20 @@ public class SpecimenForm extends FormLayout implements KeyNotifier, FormActions
     public SpecimenForm(LibraryManagerClient client) {
         this.client = client;
 
-        bookTitle.setReadOnly(true);
+        setSizeUndefined();
+        setWidth("260px");
+        add(bookTitle, publisher, yearOfPublication, isbn, status, save, update, reset, delete, close);
+        setVisible(false);
 
         specimenSaveSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         specimenUpdateSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         specimenDeleteSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         specimenCantDelete.addThemeVariants(NotificationVariant.LUMO_ERROR);
 
-        status.setItems(Status.statusList());
-        status.setPlaceholder("Select status");
-        status.setClearButtonVisible(true);
-        status.setRequired(true);
-        status.setErrorMessage("Required field");
+        bookTitle.setReadOnly(true);
 
-        setSizeUndefined();
-
-        setWidth("260px");
-
-        add(bookTitle, publisher, yearOfPublication, isbn, status, save, update, reset, delete, close);
-
-        setTextFieldsOptions(publisher, yearOfPublication, isbn);
+        componentDesigner.setComboboxOptions(Status.statusList(), "Select status", status);
+        componentDesigner.setTextFieldsOptions(publisher, yearOfPublication, isbn);
 
         binder.forField(bookTitle)
                 .asRequired("Required field")
@@ -107,20 +103,18 @@ public class SpecimenForm extends FormLayout implements KeyNotifier, FormActions
         delete.addClickListener(e -> delete());
         reset.addClickListener(e -> editSpecimen(specimenDto));
         close.addClickListener(e -> dialog.close());
-
-        setVisible(false);
     }
 
     @Override
     public void save() {
         client.saveNewSpecimen(specimenDto);
-        setActions(specimenSaveSuccessful, changeHandler, dialog);
+        componentDesigner.setActions(specimenSaveSuccessful, changeHandler, dialog);
     }
 
     @Override
     public void update() {
         client.updateSpecimen(specimenDto);
-        setActions(specimenUpdateSuccessful, changeHandler, dialog);
+        componentDesigner.setActions(specimenUpdateSuccessful, changeHandler, dialog);
     }
 
     @Override
@@ -129,7 +123,7 @@ public class SpecimenForm extends FormLayout implements KeyNotifier, FormActions
             specimenCantDelete.open();
         } else {
             client.deleteSpecimen(specimenDto.getId());
-            setActions(specimenDeleteSuccessful, changeHandler, dialog);
+            componentDesigner.setActions(specimenDeleteSuccessful, changeHandler, dialog);
         }
     }
 
@@ -162,19 +156,5 @@ public class SpecimenForm extends FormLayout implements KeyNotifier, FormActions
 
     public void setChangeHandler(ChangeHandler h) {
         this.changeHandler = h;
-    }
-
-    private void setActions(Notification success, ChangeHandler changeHandler, Dialog form) {
-        success.open();
-        changeHandler.onChange();
-        form.close();
-    }
-
-    private void setTextFieldsOptions(TextField... textFields) {
-        for(TextField t : textFields) {
-            t.setClearButtonVisible(true);
-            t.setRequired(true);
-            t.setErrorMessage("Required field");
-        }
     }
 }

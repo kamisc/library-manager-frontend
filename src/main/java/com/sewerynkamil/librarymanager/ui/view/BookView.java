@@ -6,6 +6,7 @@ import com.sewerynkamil.librarymanager.security.SecurityUtils;
 import com.sewerynkamil.librarymanager.ui.MainView;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
+import com.sewerynkamil.librarymanager.ui.components.ComponentDesigner;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
 import com.sewerynkamil.librarymanager.ui.view.form.BookForm;
 import com.vaadin.flow.component.button.Button;
@@ -17,7 +18,6 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.apache.commons.lang3.StringUtils;
@@ -32,8 +32,9 @@ import org.springframework.security.access.annotation.Secured;
 @PageTitle(LibraryConst.TITLE_BOOKS)
 @Secured({"ROLE_User", "ROLE_Admin"})
 public class BookView extends VerticalLayout {
-    private LibraryManagerClient client;
     private ButtonFactory buttonFactory = new ButtonFactory();
+    private ComponentDesigner componentDesigner = new ComponentDesigner();
+    private LibraryManagerClient client;
 
     private Button addNewBookButton = buttonFactory.createButton(ButtonType.ADDBUTTON, "Add new book", "225px");
     private Grid<BookDto> grid = new Grid<>(BookDto.class);
@@ -53,8 +54,8 @@ public class BookView extends VerticalLayout {
         this.specimenView = specimenView;
 
         setSizeFull();
-
         add(grid);
+        bookList();
 
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
         grid.setColumns("author", "title", "category", "yearOfFirstPublication");
@@ -63,7 +64,7 @@ public class BookView extends VerticalLayout {
         grid.getColumnByKey("yearOfFirstPublication").setHeader("First publication");
         grid.addComponentColumn(bookDto -> createSpecimenButton(bookDto));
 
-        generateFilter(authorFilter, "Filter by author");
+        componentDesigner.generateFilter(authorFilter, "Filter by author");
         authorFilter.addValueChangeListener(e -> {
                 if (StringUtils.isBlank(e.getValue())) {
                     bookList();
@@ -73,7 +74,7 @@ public class BookView extends VerticalLayout {
             }
         );
 
-        generateFilter(titleFilter, "Filter by title");
+        componentDesigner.generateFilter(titleFilter, "Filter by title");
         titleFilter.addValueChangeListener(e -> {
                 if (StringUtils.isBlank(e.getValue())) {
                         bookList();
@@ -83,7 +84,7 @@ public class BookView extends VerticalLayout {
             }
         );
 
-        generateFilter(categoryFilter, "Filter by category");
+        componentDesigner.generateFilter(categoryFilter, "Filter by category");
         categoryFilter.addValueChangeListener(e -> {
                 if (StringUtils.isBlank(e.getValue())) {
                     bookList();
@@ -112,8 +113,6 @@ public class BookView extends VerticalLayout {
 
             addNewBookButton.addClickListener(e -> bookForm.editBook(new BookDto()));
         }
-
-        bookList();
     }
 
     private void bookList() {
@@ -126,12 +125,6 @@ public class BookView extends VerticalLayout {
                 },
                 query -> client.countBooks().intValue()
         ));
-    }
-
-    private void generateFilter(TextField field, String placeholder) {
-        field.setPlaceholder(placeholder);
-        field.setValueChangeMode(ValueChangeMode.EAGER);
-        field.setClearButtonVisible(true);
     }
 
     private Button createSpecimenButton(BookDto bookDto) {

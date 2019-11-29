@@ -4,6 +4,7 @@ import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
 import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
+import com.sewerynkamil.librarymanager.ui.components.ComponentDesigner;
 import com.sewerynkamil.librarymanager.ui.utils.StringIntegerConverter;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
@@ -32,6 +33,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Secured({"ROLE_User", "ROLE_Admin"})
 public class MyAccountForm extends FormLayout implements KeyNotifier {
     private ButtonFactory buttonFactory = new ButtonFactory();
+    private ComponentDesigner componentDesigner = new ComponentDesigner();
     private LibraryManagerClient client;
     private UserDto userDto;
 
@@ -39,8 +41,8 @@ public class MyAccountForm extends FormLayout implements KeyNotifier {
 
     private TextField name = new TextField("Name");
     private TextField surname = new TextField("Surname");
-    private EmailField email = new EmailField("E-mail");
     private TextField phoneNumber = new TextField("Phone number");
+    private EmailField email = new EmailField("E-mail");
     private PasswordField password = new PasswordField("Password");
 
     private Button update = buttonFactory.createButton(ButtonType.UPDATE, "Update", "225px");
@@ -57,14 +59,13 @@ public class MyAccountForm extends FormLayout implements KeyNotifier {
     public MyAccountForm(LibraryManagerClient client) {
         this.client = client;
 
+        setSizeUndefined();
+        setWidth("260px");
+        add(name, surname, email, phoneNumber, password, update, reset, close);
+        setVisible(false);
+
         userUpdateSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         passwordError.addThemeVariants(NotificationVariant.LUMO_ERROR);
-
-        setSizeUndefined();
-
-        setWidth("260px");
-
-        add(name, surname, email, phoneNumber, password, update, reset, close);
 
         email.setReadOnly(true);
         password.setRequired(true);
@@ -88,8 +89,6 @@ public class MyAccountForm extends FormLayout implements KeyNotifier {
         update.addClickListener(e -> update());
         reset.addClickListener(e -> editUser(userDto));
         close.addClickListener(e -> dialog.close());
-
-        setVisible(false);
     }
 
     public void update() {
@@ -98,7 +97,7 @@ public class MyAccountForm extends FormLayout implements KeyNotifier {
         } else {
             userDto.setPassword(passwordEncoder().encode(password.getValue()));
             client.updateUser(userDto);
-            setActions(userUpdateSuccessful, changeHandler, dialog);
+            componentDesigner.setActions(userUpdateSuccessful, changeHandler, dialog);
         }
     }
 
@@ -120,13 +119,7 @@ public class MyAccountForm extends FormLayout implements KeyNotifier {
         this.changeHandler = h;
     }
 
-    private void setActions(Notification success, ChangeHandler changeHandler, Dialog form) {
-        success.open();
-        changeHandler.onChange();
-        form.close();
-    }
-
-    public PasswordEncoder passwordEncoder() {
+    private PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

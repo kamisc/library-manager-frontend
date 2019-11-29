@@ -35,18 +35,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 @UIScope
 @Secured({"ROLE_User", "ROLE_Admin"})
 public class SpecimenView extends FormLayout implements KeyNotifier {
-    private LibraryManagerClient client;
     private ButtonFactory buttonFactory = new ButtonFactory();
+    private LibraryManagerClient client;
     private UserDto userDto;
 
     private Grid<SpecimenDto> grid = new Grid<>(SpecimenDto.class);
+
     private VerticalLayout elements = new VerticalLayout();
 
     private Button addNewSpecimenButton = buttonFactory.createButton(ButtonType.ADDBUTTON, "Add new specimen", "820px");
     private Button close = buttonFactory.createButton(ButtonType.CLOSE, "Close", "820px");
 
     private Notification rentSuccessful = new Notification("The book has been rented succesfully!", 3000);
-
 
     private Dialog dialog = new Dialog();
 
@@ -63,14 +63,16 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
         this.specimenForm = specimenForm;
         userDto = getCurrentUser(client);
 
-        rentSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-
-        bookTitle.setClassName("specimen-view-book-title");
         add(elements);
+        setVisible(false);
 
         grid.setWidth("840px");
         grid.setColumns("id", "publisher", "yearOfPublication", "status", "isbn");
         grid.getColumnByKey("id").setWidth("75px").setFlexGrow(0).setTextAlign(ColumnTextAlign.START);
+
+        rentSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+        bookTitle.setClassName("specimen-view-book-title");
 
         if(SecurityUtils.isAccessGranted(SpecimenForm.class)) {
             grid.asSingleSelect().addValueChangeListener(e -> {
@@ -90,8 +92,6 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
         }
 
         close.addClickListener(e -> dialog.close());
-
-        setVisible(false);
     }
 
     public void showSpecimens(Long bookId) {

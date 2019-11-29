@@ -58,6 +58,7 @@ public class MyAccountView extends VerticalLayout {
         this.myAccountForm = myAccountForm;
         userDto = getCurrentUser(client);
 
+        add(myAccount);
         setAlignItems(Alignment.CENTER);
 
         grid.setItems(client.getAllRentsByUserId(userDto.getId()));
@@ -76,8 +77,6 @@ public class MyAccountView extends VerticalLayout {
 
         setFieldsValues(userDto);
         setFieldsReadOnly();
-
-        add(myAccount);
 
         myAccountForm.setChangeHandler(() -> {
             myAccountForm.setVisible(false);

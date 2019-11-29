@@ -5,6 +5,7 @@ import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.dto.enumerated.Role;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
+import com.sewerynkamil.librarymanager.ui.components.ComponentDesigner;
 import com.sewerynkamil.librarymanager.ui.utils.StringIntegerConverter;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
@@ -28,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @UIScope
 public class RegistrationForm extends FormLayout implements KeyNotifier {
     private ButtonFactory buttonFactory = new ButtonFactory();
+    private ComponentDesigner componentDesigner = new ComponentDesigner();
     private LibraryManagerClient client;
     private UserDto userDto;
 
@@ -35,8 +37,8 @@ public class RegistrationForm extends FormLayout implements KeyNotifier {
 
     private TextField name = new TextField("Name");
     private TextField surname = new TextField("Surname");
-    private EmailField email = new EmailField("E-mail");
     private TextField phoneNumber = new TextField("Phone number");
+    private EmailField email = new EmailField("E-mail");
     private PasswordField password = new PasswordField("Password");
 
     private Button save = buttonFactory.createButton(ButtonType.SAVE, "Save", "225px");
@@ -53,16 +55,23 @@ public class RegistrationForm extends FormLayout implements KeyNotifier {
     public RegistrationForm(LibraryManagerClient client) {
         this.client = client;
 
+        setWidth("260px");
+        add(name, surname, email, phoneNumber, password, save, reset, close);
+        setVisible(false);
+
         userExist.addThemeVariants(NotificationVariant.LUMO_ERROR);
         userSaveSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-
-        setWidth("260px");
 
         name.setWidth("225px");
         surname.setWidth("225px");
         email.setWidth("225px");
         phoneNumber.setWidth("225px");
         password.setWidth("225px");
+
+        name.setClearButtonVisible(true);
+        surname.setClearButtonVisible(true);
+        email.setClearButtonVisible(true);
+        phoneNumber.setClearButtonVisible(true);
 
         binder.forField(name)
                 .asRequired("Required field")
@@ -82,22 +91,13 @@ public class RegistrationForm extends FormLayout implements KeyNotifier {
                 .asRequired("Required field")
                 .bind(UserDto::getPassword, UserDto::setPassword);
 
-        name.setClearButtonVisible(true);
-        surname.setClearButtonVisible(true);
-        email.setClearButtonVisible(true);
-        phoneNumber.setClearButtonVisible(true);
-
         save.setWidth("225px");
         reset.setWidth("225px");
         close.setWidth("225px");
 
-        add(name, surname, email, phoneNumber, password, save, reset, close);
-
         save.addClickListener(e -> save());
         reset.addClickListener(e -> reset());
         close.addClickListener(e -> close());
-
-        setVisible(false);
     }
 
     private void save() {
@@ -110,9 +110,7 @@ public class RegistrationForm extends FormLayout implements KeyNotifier {
 
         if(!client.isUserExist(userDto.getEmail())) {
             client.registerUser(userDto);
-            userSaveSuccessful.open();
-            changeHandler.onChange();
-            dialog.close();
+            componentDesigner.setActions(userSaveSuccessful, changeHandler, dialog);
             reset();
         } else {
             userExist.open();
