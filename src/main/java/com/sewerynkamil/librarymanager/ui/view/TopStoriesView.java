@@ -7,6 +7,8 @@ import com.sewerynkamil.librarymanager.ui.MainView;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
@@ -26,19 +28,25 @@ public class TopStoriesView extends VerticalLayout {
     private LibraryManagerClient client;
 
     private Grid<NYTimesResultsDto> grid = new Grid<>(NYTimesResultsDto.class);
+    private HorizontalLayout top = new HorizontalLayout();
 
-    private ComboBox<String> section = new ComboBox<>("Section");
-
+    private ComboBox<String> section = new ComboBox<>();
+    private Label copyright = new Label("Copyright (c) 2019 The New York Times Company. All Rights Reserved.");
 
     @Autowired
     public TopStoriesView(LibraryManagerClient client) {
         this.client = client;
 
+        top.add(section, copyright);
+
         setSizeFull();
 
-        add(section, grid);
+        add(top, grid);
 
         grid.setColumns("byline", "title", "published_date", "url");
+        grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
+        grid.getColumnByKey("published_date").setHeader("Published date");
+        grid.getColumnByKey("url").setHeader("Read");
 
         section.setItems(NYTimesSection.sectionList());
         section.setPlaceholder("Select section");
