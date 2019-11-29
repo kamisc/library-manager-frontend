@@ -10,7 +10,6 @@ import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabVariant;
@@ -42,8 +41,7 @@ public class MainView extends AppLayout {
         menu.setFlexGrowForEnclosedTabs(1);
         menu.setClassName("nav-bar");
 
-        this.addToNavbar(appName);
-        this.addToNavbar(menu);
+        addToNavbar(appName, menu);
     }
 
     private static Tabs createMenuTabs() {
