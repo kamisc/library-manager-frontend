@@ -5,6 +5,7 @@ import com.sewerynkamil.librarymanager.dto.BookDto;
 import com.sewerynkamil.librarymanager.dto.RentDto;
 import com.sewerynkamil.librarymanager.dto.SpecimenDto;
 import com.sewerynkamil.librarymanager.dto.UserDto;
+import com.sewerynkamil.librarymanager.security.SecurityUtils;
 import com.sewerynkamil.librarymanager.ui.MainView;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
@@ -92,6 +93,10 @@ public class MyAccountView extends VerticalLayout {
             UI.getCurrent().getPage().reload();
         });
 
+        if(SecurityUtils.isAccessGranted(UserView.class)) {
+            myAccount.remove(userRents);
+        }
+
         editMyUserDataButton.addClickListener(e -> myAccountForm.editUser(userDto));
     }
 
@@ -125,7 +130,6 @@ public class MyAccountView extends VerticalLayout {
     }
 
     private Button createProlongationButton(Grid<RentDto> grid, RentDto rentDto, UserDto userDto) {
-        //@SuppressWarnings("unchecked")
         Button button = new Button("Prolongate rent", clickEvent -> {
             client.prolongationRent(rentDto.getSpecimenId(), userDto.getId());
             grid.setItems(client.getAllRentsByUserId(userDto.getId()));
