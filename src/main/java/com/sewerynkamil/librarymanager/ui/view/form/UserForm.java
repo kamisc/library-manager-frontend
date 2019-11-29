@@ -1,14 +1,11 @@
 package com.sewerynkamil.librarymanager.ui.view.form;
 
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
-import com.sewerynkamil.librarymanager.dto.BookDto;
 import com.sewerynkamil.librarymanager.dto.UserDto;
-import com.sewerynkamil.librarymanager.dto.enumerated.Category;
 import com.sewerynkamil.librarymanager.dto.enumerated.Role;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
 import com.sewerynkamil.librarymanager.utils.StringIntegerConverter;
-import com.sewerynkamil.librarymanager.utils.StringLongConverter;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -17,7 +14,6 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.textfield.EmailField;
-import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -25,8 +21,6 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-
-import java.time.LocalDate;
 
 /**
  * Author Kamil Seweryn
@@ -44,8 +38,8 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
 
     private TextField name = new TextField("Name");
     private TextField surname = new TextField("Surname");
-    private EmailField email = new EmailField("E-mail");
     private TextField phoneNumber = new TextField("Phone number");
+    private EmailField email = new EmailField("E-mail");
     private PasswordField password = new PasswordField("Password");
     private ComboBox<String> role = new ComboBox<>("Role");
 
@@ -85,6 +79,8 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
         setWidth("260px");
 
         add(name, surname, email, phoneNumber, password, role, save, update, reset, delete, close);
+
+        setTextFieldsOptions(name, surname, phoneNumber);
 
         binder.forField(name)
                 .asRequired("Required field")
