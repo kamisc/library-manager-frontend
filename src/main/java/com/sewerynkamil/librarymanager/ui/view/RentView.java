@@ -3,7 +3,6 @@ package com.sewerynkamil.librarymanager.ui.view;
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
 import com.sewerynkamil.librarymanager.dto.RentDto;
 import com.sewerynkamil.librarymanager.ui.MainView;
-import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -11,7 +10,6 @@ import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -31,7 +29,6 @@ import org.springframework.security.access.annotation.Secured;
 @Secured("ROLE_Admin")
 public class RentView extends VerticalLayout {
     private LibraryManagerClient client;
-    private ButtonFactory buttonFactory = new ButtonFactory();
 
     private Grid<RentDto> grid = new Grid<>(RentDto.class);
 
@@ -40,20 +37,18 @@ public class RentView extends VerticalLayout {
 
     private HeaderRow filterRow = grid.appendHeaderRow();
 
-    private HorizontalLayout editors = new HorizontalLayout(grid);
-
     @Autowired
     public RentView(LibraryManagerClient client) {
         this.client = client;
 
-        editors.setSizeFull();
+        setSizeFull();
 
-        add(editors);
+        add(grid);
 
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
         grid.setColumns("rentId", "specimenId", "bookTitle", "userEmail", "rentDate", "returnDate");
         grid.getColumnByKey("rentId").setTextAlign(ColumnTextAlign.START);
-        grid.addComponentColumn(rentDto -> createProlongationButton(grid, rentDto));
+        grid.addComponentColumn(rentDto -> createProlongationButton(rentDto));
 
         generateFilter(bookTitleFiter, "Filter by book title");
         bookTitleFiter.addValueChangeListener(e -> {
@@ -99,8 +94,7 @@ public class RentView extends VerticalLayout {
         field.setClearButtonVisible(true);
     }
 
-    private Button createProlongationButton(Grid<RentDto> grid, RentDto rentDto) {
-        //@SuppressWarnings("unchecked")
+    private Button createProlongationButton(RentDto rentDto) {
         Button button = new Button("Return book", clickEvent -> {
             client.returnBook(rentDto.getRentId());
             rentList();
