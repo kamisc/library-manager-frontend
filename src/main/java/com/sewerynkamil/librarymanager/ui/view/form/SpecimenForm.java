@@ -1,13 +1,10 @@
 package com.sewerynkamil.librarymanager.ui.view.form;
 
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
-import com.sewerynkamil.librarymanager.dto.BookDto;
 import com.sewerynkamil.librarymanager.dto.SpecimenDto;
-import com.sewerynkamil.librarymanager.dto.enumerated.Category;
 import com.sewerynkamil.librarymanager.dto.enumerated.Status;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
-import com.sewerynkamil.librarymanager.ui.view.SpecimenView;
 import com.sewerynkamil.librarymanager.utils.StringIntegerConverter;
 import com.sewerynkamil.librarymanager.utils.StringLongConverter;
 import com.vaadin.flow.component.KeyNotifier;
