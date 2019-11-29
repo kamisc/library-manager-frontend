@@ -5,6 +5,9 @@ import com.sewerynkamil.librarymanager.dto.enumerated.NYTimesSection;
 import com.sewerynkamil.librarymanager.dto.nytimes.NYTimesResultsDto;
 import com.sewerynkamil.librarymanager.ui.MainView;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -43,10 +46,12 @@ public class TopStoriesView extends VerticalLayout {
 
         add(top, grid);
 
-        grid.setColumns("byline", "title", "published_date", "url");
+        grid.setColumns("byline", "title", "published_date");
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
-        grid.getColumnByKey("published_date").setHeader("Published date");
-        grid.getColumnByKey("url").setHeader("Read");
+        grid.getColumnByKey("byline").setWidth("150px");
+        grid.getColumnByKey("title").setWidth("450px");
+        grid.getColumnByKey("published_date").setHeader("Published date").setWidth("150px");
+        grid.addComponentColumn(nyTimesResultsDto -> createUrlButton(nyTimesResultsDto)).setHeader("Read");
 
         section.setItems(NYTimesSection.sectionList());
         section.setPlaceholder("Select section");
@@ -62,5 +67,13 @@ public class TopStoriesView extends VerticalLayout {
         } else {
             grid.setItems(client.getAllTopStoriesBySection(section.toLowerCase()).getResults());
         }
+    }
+
+    private Button createUrlButton(NYTimesResultsDto nyTimesResultsDto) {
+        Button button = new Button("Read", clickEvent -> {
+            UI.getCurrent().getPage().open(nyTimesResultsDto.getUrl());
+        });
+        button.addThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
+        return button;
     }
 }
