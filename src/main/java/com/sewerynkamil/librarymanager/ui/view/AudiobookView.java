@@ -48,7 +48,7 @@ public class AudiobookView extends VerticalLayout {
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
         grid.setColumns("author", "title", "genre", "epoch");
         grid.getColumnByKey("author").setTextAlign(ColumnTextAlign.START);
-        grid.addComponentColumn(audiobookDto -> createUrlButton(audiobookDto)).setHeader("Listen");
+        grid.addComponentColumn(audiobookDto -> createUrlButton(audiobookDto));
 
         generateFilter(authorFilter, "Filter by author");
         authorFilter.addValueChangeListener(e -> {

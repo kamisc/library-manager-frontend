@@ -9,6 +9,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Label;
@@ -51,7 +52,7 @@ public class TopStoriesView extends VerticalLayout {
         grid.getColumnByKey("byline").setWidth("150px");
         grid.getColumnByKey("title").setWidth("450px");
         grid.getColumnByKey("published_date").setHeader("Published date").setWidth("150px");
-        grid.addComponentColumn(nyTimesResultsDto -> createUrlButton(nyTimesResultsDto)).setHeader("Read");
+        grid.addComponentColumn(nyTimesResultsDto -> createUrlButton(nyTimesResultsDto)).setTextAlign(ColumnTextAlign.CENTER);
 
         section.setItems(NYTimesSection.sectionList());
         section.setPlaceholder("Select section");
