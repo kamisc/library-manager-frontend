@@ -8,7 +8,6 @@ import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -35,16 +34,13 @@ public class AudiobookView extends VerticalLayout {
     private TextField authorFilter = new TextField();
     private HeaderRow filterRow = grid.appendHeaderRow();
 
-    HorizontalLayout actions = new HorizontalLayout(titleFilter);
-    HorizontalLayout editors = new HorizontalLayout(grid);
-
     @Autowired
     public AudiobookView(LibraryManagerClient client) {
         this.client = client;
 
-        editors.setSizeFull();
+        setSizeFull();
 
-        add(actions, editors);
+        add(grid);
 
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
         grid.setColumns("author", "title", "genre", "epoch", "url");
