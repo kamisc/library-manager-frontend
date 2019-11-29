@@ -1,6 +1,5 @@
 package com.sewerynkamil.librarymanager.dto;
 
-import com.sewerynkamil.librarymanager.dto.enumerated.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
