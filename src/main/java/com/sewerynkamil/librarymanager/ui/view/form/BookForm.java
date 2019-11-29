@@ -2,16 +2,11 @@ package com.sewerynkamil.librarymanager.ui.view.form;
 
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
 import com.sewerynkamil.librarymanager.dto.BookDto;
-import com.sewerynkamil.librarymanager.dto.RentDto;
 import com.sewerynkamil.librarymanager.dto.enumerated.Category;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
 import com.sewerynkamil.librarymanager.utils.StringIntegerConverter;
-import com.sewerynkamil.librarymanager.utils.StringLongConverter;
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.KeyNotifier;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -26,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * Author Kamil Seweryn
@@ -44,8 +38,8 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
 
     private TextField author = new TextField("Author");
     private TextField title = new TextField("Title");
-    private ComboBox<String> category = new ComboBox<>("Category");
     private TextField yearOfFirstPublication = new TextField("First publication");
+    private ComboBox<String> category = new ComboBox<>("Category");
 
     private Button save = buttonFactory.createButton(ButtonType.SAVE, "Save", "225px");
     private Button update = buttonFactory.createButton(ButtonType.UPDATE, "Update", "225px");
