@@ -1,7 +1,6 @@
 package com.sewerynkamil.librarymanager.ui.view;
 
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
-import com.sewerynkamil.librarymanager.dto.BookDto;
 import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.ui.MainView;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
@@ -13,7 +12,6 @@ import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -42,9 +40,6 @@ public class UserView extends VerticalLayout {
     private TextField emailFilter = new TextField();
     private HeaderRow filterRow = grid.appendHeaderRow();
 
-    private HorizontalLayout actions = new HorizontalLayout(addNewUserButton);
-    private HorizontalLayout editors = new HorizontalLayout(grid);
-
     private UserForm userForm;
 
     @Autowired
@@ -52,9 +47,9 @@ public class UserView extends VerticalLayout {
         this.client = client;
         this.userForm = userForm;
 
-        editors.setSizeFull();
+        setSizeFull();
 
-        add(actions, editors);
+        add(addNewUserButton, grid);
 
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
         grid.setColumns("name", "surname", "email", "phoneNumber", "role");
@@ -98,8 +93,6 @@ public class UserView extends VerticalLayout {
             userForm.setVisible(false);
             userList();
         });
-
-        actions.add(addNewUserButton);
 
         addNewUserButton.addClickListener(e -> userForm.editUser(new UserDto()));
 
