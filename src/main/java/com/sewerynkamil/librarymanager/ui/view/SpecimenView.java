@@ -1,7 +1,6 @@
 package com.sewerynkamil.librarymanager.ui.view;
 
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
-import com.sewerynkamil.librarymanager.dto.BookDto;
 import com.sewerynkamil.librarymanager.dto.SpecimenDto;
 import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.dto.enumerated.Status;
@@ -20,7 +19,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -28,9 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Author Kamil Seweryn
@@ -91,7 +86,7 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
         }
 
         if(!SecurityUtils.isAccessGranted(SpecimenForm.class)) {
-            grid.addComponentColumn(specimenDto -> createRentButton(grid, specimenDto, userDto));
+            grid.addComponentColumn(specimenDto -> createRentButton(specimenDto, userDto));
         }
 
         close.addClickListener(e -> dialog.close());
@@ -122,8 +117,7 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
         }
     }
 
-    private Button createRentButton(Grid<SpecimenDto> grid, SpecimenDto specimenDto, UserDto userDto) {
-        //@SuppressWarnings("unchecked")
+    private Button createRentButton(SpecimenDto specimenDto, UserDto userDto) {
         Button button = new Button("Rent this book", clickEvent -> {
             client.rentBook(specimenDto.getId(), userDto.getId());
             dialog.close();
