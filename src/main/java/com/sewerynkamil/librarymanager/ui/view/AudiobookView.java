@@ -4,6 +4,9 @@ import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
 import com.sewerynkamil.librarymanager.dto.wolnelektury.WolneLekturyAudiobookDto;
 import com.sewerynkamil.librarymanager.ui.MainView;
 import com.sewerynkamil.librarymanager.ui.utils.LibraryConst;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -43,9 +46,9 @@ public class AudiobookView extends VerticalLayout {
         add(grid);
 
         grid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
-        grid.setColumns("author", "title", "genre", "epoch", "url");
+        grid.setColumns("author", "title", "genre", "epoch");
         grid.getColumnByKey("author").setTextAlign(ColumnTextAlign.START);
-        grid.getColumnByKey("url").setHeader("Listen");
+        grid.addComponentColumn(audiobookDto -> createUrlButton(audiobookDto)).setHeader("Listen");
 
         generateFilter(authorFilter, "Filter by author");
         authorFilter.addValueChangeListener(e -> {
@@ -88,5 +91,13 @@ public class AudiobookView extends VerticalLayout {
         field.setPlaceholder(placeholder);
         field.setValueChangeMode(ValueChangeMode.EAGER);
         field.setClearButtonVisible(true);
+    }
+
+    private Button createUrlButton(WolneLekturyAudiobookDto wolneLekturyAudiobookDto) {
+        Button button = new Button("Listen", clickEvent -> {
+            UI.getCurrent().getPage().open(wolneLekturyAudiobookDto.getUrl());
+        });
+        button.addThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
+        return button;
     }
 }
