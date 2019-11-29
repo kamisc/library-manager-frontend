@@ -1,4 +1,4 @@
-package com.sewerynkamil.librarymanager.utils;
+package com.sewerynkamil.librarymanager.ui.utils;
 
 import com.vaadin.flow.data.binder.Result;
 import com.vaadin.flow.data.binder.ValueContext;
@@ -8,18 +8,18 @@ import com.vaadin.flow.data.converter.Converter;
  * Author Kamil Seweryn
  */
 
-public class StringIntegerConverter implements Converter<String, Integer> {
+public class StringLongConverter implements Converter<String, Long> {
     @Override
-    public Result<Integer> convertToModel(String value, ValueContext context) {
+    public Result<Long> convertToModel(String value, ValueContext context) {
         try {
-            return Result.ok(Integer.valueOf(value));
+            return Result.ok(Long.valueOf(value));
         } catch (NumberFormatException e) {
             return Result.error("Please enter a number");
         }
     }
 
     @Override
-    public String convertToPresentation(Integer value, ValueContext context) {
+    public String convertToPresentation(Long value, ValueContext context) {
         if(value == null) {
             return "";
         }
