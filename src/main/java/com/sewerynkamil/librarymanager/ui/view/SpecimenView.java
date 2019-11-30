@@ -53,7 +53,7 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
     private Label bookTitle = new Label();
 
     public String title = "";
-    public Long id;
+    private Long id;
 
     private SpecimenForm specimenForm;
 
@@ -94,7 +94,7 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
         close.addClickListener(e -> dialog.close());
     }
 
-    public void showSpecimens(Long bookId) {
+    private void showSpecimens(Long bookId) {
         id = client.getOneBook(bookId).getId();
         title = client.getOneBook(bookId).getTitle();
         bookTitle.setText(client.getOneBook(bookId).getTitle());
@@ -105,7 +105,7 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
         setVisible(true);
     }
 
-    public void getSpecimens(Long bookId) {
+    private void getSpecimens(Long bookId) {
         if(SecurityUtils.isAccessGranted(BookForm.class)) {
             grid.setItems(client.getAllSpecimensForOneBook(bookId));
             grid.setHeight("370px");
