@@ -3,6 +3,7 @@ package com.sewerynkamil.librarymanager.ui.view;
 import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
 import com.sewerynkamil.librarymanager.dto.RentDto;
 import com.sewerynkamil.librarymanager.dto.UserDto;
+import com.sewerynkamil.librarymanager.security.CurrentUser;
 import com.sewerynkamil.librarymanager.security.SecurityUtils;
 import com.sewerynkamil.librarymanager.ui.MainView;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
@@ -32,8 +33,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 @PageTitle(LibraryConst.TITLE_MY_ACCOUNT)
 @Secured({"ROLE_User", "ROLE_Admin"})
 public class MyAccountView extends VerticalLayout {
-    private LibraryManagerClient client;
+    private CurrentUser currentUser = new CurrentUser();
     private ButtonFactory buttonFactory = new ButtonFactory();
+    private LibraryManagerClient client;
     private UserDto userDto;
 
     private Button editMyUserDataButton = buttonFactory.createButton(ButtonType.UPDATE, "Update My data", "192px");
@@ -56,7 +58,7 @@ public class MyAccountView extends VerticalLayout {
     public MyAccountView(LibraryManagerClient client, MyAccountForm myAccountForm) {
         this.client = client;
         this.myAccountForm = myAccountForm;
-        userDto = getCurrentUser(client);
+        userDto = currentUser.getCurrentUser(client);
 
         add(myAccount);
         setAlignItems(Alignment.CENTER);
@@ -88,21 +90,6 @@ public class MyAccountView extends VerticalLayout {
         }
 
         editMyUserDataButton.addClickListener(e -> myAccountForm.editUser(userDto));
-    }
-
-    private UserDto getCurrentUser(LibraryManagerClient client) {
-        return client.getOneUserByEmail(getPrincipalUsername());
-    }
-
-    private String getPrincipalUsername() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username;
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails)principal).getUsername();
-        } else {
-            username = principal.toString();
-        }
-        return username;
     }
 
     private void userRentList(Long id) {

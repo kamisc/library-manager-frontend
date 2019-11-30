@@ -4,6 +4,7 @@ import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
 import com.sewerynkamil.librarymanager.dto.SpecimenDto;
 import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.dto.enumerated.Status;
+import com.sewerynkamil.librarymanager.security.CurrentUser;
 import com.sewerynkamil.librarymanager.security.SecurityUtils;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
@@ -35,6 +36,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @UIScope
 @Secured({"ROLE_User", "ROLE_Admin"})
 public class SpecimenView extends FormLayout implements KeyNotifier {
+    private CurrentUser currentUser = new CurrentUser();
     private ButtonFactory buttonFactory = new ButtonFactory();
     private LibraryManagerClient client;
     private UserDto userDto;
@@ -61,7 +63,7 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
     public SpecimenView(LibraryManagerClient client, SpecimenForm specimenForm) {
         this.client = client;
         this.specimenForm = specimenForm;
-        userDto = getCurrentUser(client);
+        userDto = currentUser.getCurrentUser(client);
 
         add(elements);
         setVisible(false);
@@ -125,20 +127,5 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
         });
         button.addThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
         return button;
-    }
-
-    private UserDto getCurrentUser(LibraryManagerClient client) {
-        return client.getOneUserByEmail(getPrincipalUsername());
-    }
-
-    private String getPrincipalUsername() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username;
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails)principal).getUsername();
-        } else {
-            username = principal.toString();
-        }
-        return username;
     }
 }
