@@ -63,7 +63,7 @@ public class MyAccountView extends VerticalLayout {
 
         grid.setItems(client.getAllRentsByUserId(userDto.getId()));
         grid.setColumns("rentId", "specimenId", "bookTitle", "rentDate", "returnDate");
-        grid.addComponentColumn(rentDto -> createProlongationButton(grid, rentDto, userDto));
+        grid.addComponentColumn(rentDto -> createProlongationButton(rentDto, userDto));
 
         userRents.setClassName("my-account-user-rents");
         userRents.add(grid);
@@ -105,6 +105,19 @@ public class MyAccountView extends VerticalLayout {
         return username;
     }
 
+    private void userRentList(Long id) {
+        grid.setItems(client.getAllRentsByUserId(id));
+    }
+
+    private Button createProlongationButton(RentDto rentDto, UserDto userDto) {
+        Button button = new Button("Prolongate rent", clickEvent -> {
+            client.prolongationRent(rentDto.getSpecimenId(), userDto.getId());
+            userRentList(userDto.getId());
+        });
+        button.addThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
+        return button;
+    }
+
     private void setFieldsValues(UserDto userDto) {
         name.setValue(userDto.getName());
         surname.setValue(userDto.getSurname());
@@ -117,14 +130,5 @@ public class MyAccountView extends VerticalLayout {
         surname.setReadOnly(true);
         email.setReadOnly(true);
         phoneNumber.setReadOnly(true);
-    }
-
-    private Button createProlongationButton(Grid<RentDto> grid, RentDto rentDto, UserDto userDto) {
-        Button button = new Button("Prolongate rent", clickEvent -> {
-            client.prolongationRent(rentDto.getSpecimenId(), userDto.getId());
-            grid.setItems(client.getAllRentsByUserId(userDto.getId()));
-        });
-        button.addThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
-        return button;
     }
 }
