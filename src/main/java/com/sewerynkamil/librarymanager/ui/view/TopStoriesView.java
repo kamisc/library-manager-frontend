@@ -61,7 +61,7 @@ public class TopStoriesView extends VerticalLayout {
         componentDesigner.setComboboxOptions(NYTimesSection.sectionList(), "Select section", section);
     }
 
-    public void getTopStories(String section) {
+    private void getTopStories(String section) {
         if(StringUtils.isBlank(section)) {
             grid.setItems(client.getAllTopStoriesBySection("Books").getResults());
         } else {
