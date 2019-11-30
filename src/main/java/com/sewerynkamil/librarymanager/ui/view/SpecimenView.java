@@ -94,7 +94,7 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
         close.addClickListener(e -> dialog.close());
     }
 
-    private void showSpecimens(Long bookId) {
+    void showSpecimens(Long bookId) {
         id = client.getOneBook(bookId).getId();
         title = client.getOneBook(bookId).getTitle();
         bookTitle.setText(client.getOneBook(bookId).getTitle());

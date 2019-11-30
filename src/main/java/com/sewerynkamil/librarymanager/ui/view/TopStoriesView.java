@@ -59,6 +59,7 @@ public class TopStoriesView extends VerticalLayout {
         grid.addComponentColumn(nyTimesResultsDto -> createUrlButton(nyTimesResultsDto)).setTextAlign(ColumnTextAlign.CENTER);
 
         componentDesigner.setComboboxOptions(NYTimesSection.sectionList(), "Select section", section);
+        section.addValueChangeListener(e -> getTopStories(section.getValue()));
     }
 
     private void getTopStories(String section) {
