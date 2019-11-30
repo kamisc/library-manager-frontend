@@ -55,6 +55,7 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
     private Notification userSaveSuccessful = new Notification("The user has been added succesfully!", 3000);
     private Notification userUpdateSuccessful = new Notification("The user has been updated succesfully!", 3000);
     private Notification userDeleteSuccessful = new Notification("The user has been deleted succesfully!", 3000);
+    private Notification userHasRents = new Notification("The user has rents. You can't delete him!", 3000);
     private Dialog dialog = new Dialog();
 
     private Binder<UserDto> binder = new Binder<>(UserDto.class);
@@ -74,6 +75,7 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
         userSaveSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         userUpdateSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         userDeleteSuccessful.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        userHasRents.addThemeVariants(NotificationVariant.LUMO_ERROR);
 
         componentDesigner.setComboboxOptions(Role.roleList(), "Select role", role);
         componentDesigner.setTextFieldsOptions(name, surname, phoneNumber);
@@ -128,8 +130,12 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
 
     @Override
     public void delete() {
-        client.deleteUser(userDto.getId());
-        componentDesigner.setActions(userDeleteSuccessful, changeHandler, dialog);
+        if (client.isUserHasRents(userDto.getEmail())) {
+            userHasRents.open();
+        } else {
+            client.deleteUser(userDto.getId());
+            componentDesigner.setActions(userDeleteSuccessful, changeHandler, dialog);
+        }
     }
 
     public void editUser(UserDto u) {
