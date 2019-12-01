@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.sewerynkamil.librarymanager.dto.*;
 import com.sewerynkamil.librarymanager.dto.nytimes.NYTimesTopStoriesDto;
 import com.sewerynkamil.librarymanager.dto.wolnelektury.WolneLekturyAudiobookDto;
+import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -23,8 +24,6 @@ public class LibraryManagerClient {
 
     private HttpHeaders headers = new HttpHeaders();
 
-    private String jwttoken;
-
     public String createAuthenticationToken(RequestJwtDto authenticationRequest){
         Gson gson = new Gson();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -42,7 +41,7 @@ public class LibraryManagerClient {
     }
 
     public List<BookDto> getAllBooksWithLazyLoading(int offset, int limit) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<BookDto[]> response =
                 restTemplate.exchange(
@@ -55,7 +54,7 @@ public class LibraryManagerClient {
     }
 
     public List<BookDto> getAllBooksByAuthorStartsWithIgnoreCase(String author) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<BookDto[]> response =
                 restTemplate.exchange(
@@ -68,7 +67,7 @@ public class LibraryManagerClient {
     }
 
     public List<BookDto> getAllBooksByTitleStartsWithIgnoreCase(String title) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<BookDto[]> response =
                 restTemplate.exchange(
@@ -81,7 +80,7 @@ public class LibraryManagerClient {
     }
 
     public List<BookDto> getAllBooksByCategoryStartsWithIgnoreCase(String category) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<BookDto[]> response =
                 restTemplate.exchange(
@@ -94,7 +93,7 @@ public class LibraryManagerClient {
     }
 
     public BookDto getOneBook(Long id) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<BookDto> response =
                 restTemplate.exchange(
@@ -106,7 +105,7 @@ public class LibraryManagerClient {
     }
 
     public boolean isBookExist(String title) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<Boolean> response =
                 restTemplate.exchange(
@@ -118,7 +117,7 @@ public class LibraryManagerClient {
     }
 
     public Long countBooks() {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<Long> response =
                 restTemplate.exchange(
@@ -130,7 +129,7 @@ public class LibraryManagerClient {
     }
 
     public void saveNewBook(BookDto bookDto) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         Gson gson = new Gson();
         headers.setContentType(MediaType.APPLICATION_JSON);
         String jsonContent = gson.toJson(bookDto);
@@ -139,7 +138,7 @@ public class LibraryManagerClient {
     }
 
     public void updateBook(BookDto bookDto) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         Gson gson = new Gson();
         headers.setContentType(MediaType.APPLICATION_JSON);
         String jsonContent = gson.toJson(bookDto);
@@ -148,14 +147,14 @@ public class LibraryManagerClient {
     }
 
     public void deleteBook(Long id) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         restTemplate.exchange("http://localhost:8080/v1/books?id=" + id, HttpMethod.DELETE, request, Void.class, 1);
     }
 
     public List<WolneLekturyAudiobookDto> getAllAudiobooksWithLazyLoading(int offset, int limit) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<WolneLekturyAudiobookDto[]> response =
                 restTemplate.exchange(
@@ -168,7 +167,7 @@ public class LibraryManagerClient {
     }
 
     public List<WolneLekturyAudiobookDto> getAllAudiobooksByAuthorStartsWithIgnoreCase(String author) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<WolneLekturyAudiobookDto[]> response =
                 restTemplate.exchange(
@@ -181,7 +180,7 @@ public class LibraryManagerClient {
     }
 
     public List<WolneLekturyAudiobookDto> getAllAudiobooksByTitleStartsWithIgnoreCase(String title) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<WolneLekturyAudiobookDto[]> response =
                 restTemplate.exchange(
@@ -194,7 +193,7 @@ public class LibraryManagerClient {
     }
 
     public int countAudiobooks() {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<Integer> response =
                 restTemplate.exchange(
@@ -206,7 +205,7 @@ public class LibraryManagerClient {
     }
 
     public NYTimesTopStoriesDto getAllTopStoriesBySection(String section) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<NYTimesTopStoriesDto> response =
                 restTemplate.exchange(
@@ -218,7 +217,7 @@ public class LibraryManagerClient {
     }
 
     public List<UserDto> getAllUsersWithLazyLoading(int offset, int limit) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<UserDto[]> response =
                 restTemplate.exchange(
@@ -231,7 +230,7 @@ public class LibraryManagerClient {
     }
 
     public List<UserDto> getAllUsersByNameStartsWithIgnoreCase(String name) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<UserDto[]> response =
                 restTemplate.exchange(
@@ -244,7 +243,7 @@ public class LibraryManagerClient {
     }
 
     public List<UserDto> getAllUsersBySurnameStartsWithIgnoreCase(String surname) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<UserDto[]> response =
                 restTemplate.exchange(
@@ -257,7 +256,7 @@ public class LibraryManagerClient {
     }
 
     public List<UserDto> getAllUsersByEmailStartsWithIgnoreCase(String email) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<UserDto[]> response =
                 restTemplate.exchange(
@@ -270,7 +269,7 @@ public class LibraryManagerClient {
     }
 
     public UserDto getOneUserById(Long id) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<UserDto> response =
                 restTemplate.exchange(
@@ -286,7 +285,7 @@ public class LibraryManagerClient {
     }
 
     public boolean isUserHasRents(String email) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<Boolean> response =
                 restTemplate.exchange(
@@ -302,7 +301,7 @@ public class LibraryManagerClient {
     }
 
     public Long countUsers() {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<Long> response =
                 restTemplate.exchange(
@@ -314,7 +313,7 @@ public class LibraryManagerClient {
     }
 
     public void saveNewUser(UserDto userDto) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         Gson gson = new Gson();
         headers.setContentType(MediaType.APPLICATION_JSON);
         String jsonContent = gson.toJson(userDto);
@@ -323,7 +322,7 @@ public class LibraryManagerClient {
     }
 
     public void updateUser(UserDto userDto) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         Gson gson = new Gson();
         headers.setContentType(MediaType.APPLICATION_JSON);
         String jsonContent = gson.toJson(userDto);
@@ -332,14 +331,14 @@ public class LibraryManagerClient {
     }
 
     public void deleteUser(Long id) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         restTemplate.exchange("http://localhost:8080/v1/users?id=" + id, HttpMethod.DELETE, request, Void.class, 1);
     }
 
     public List<SpecimenDto> getAllSpecimensForOneBook(Long bookId) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<SpecimenDto[]> response =
                 restTemplate.exchange(
@@ -352,7 +351,7 @@ public class LibraryManagerClient {
     }
 
     public List<SpecimenDto> getAllAvailableSpecimensForOneBook(String status, Long bookId) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<SpecimenDto[]> response =
                 restTemplate.exchange(
@@ -365,7 +364,7 @@ public class LibraryManagerClient {
     }
 
     public SpecimenDto getOneSpecimen(Long id) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<SpecimenDto> response =
                 restTemplate.exchange(
@@ -377,7 +376,7 @@ public class LibraryManagerClient {
     }
 
     public void saveNewSpecimen(SpecimenDto specimenDto) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         Gson gson = new Gson();
         headers.setContentType(MediaType.APPLICATION_JSON);
         String jsonContent = gson.toJson(specimenDto);
@@ -386,7 +385,7 @@ public class LibraryManagerClient {
     }
 
     public void updateSpecimen(SpecimenDto specimenDto) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         Gson gson = new Gson();
         headers.setContentType(MediaType.APPLICATION_JSON);
         String jsonContent = gson.toJson(specimenDto);
@@ -395,14 +394,14 @@ public class LibraryManagerClient {
     }
 
     public void deleteSpecimen(Long id) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         restTemplate.exchange("http://localhost:8080/v1/specimens?id=" + id, HttpMethod.DELETE, request, Void.class, 1);
     }
 
     public List<RentDto> getAllRentsWithLazyLoading(int offset, int limit) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<RentDto[]> response =
                 restTemplate.exchange(
@@ -415,7 +414,7 @@ public class LibraryManagerClient {
     }
 
     public List<RentDto> getAllRentsByUserId(Long userId) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<RentDto[]> response =
                 restTemplate.exchange(
@@ -428,7 +427,7 @@ public class LibraryManagerClient {
     }
 
     public List<RentDto> getAllRentsByBookTitleStartsWithIgnoreCase(String bookTitle) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<RentDto[]> response =
                 restTemplate.exchange(
@@ -441,7 +440,7 @@ public class LibraryManagerClient {
     }
 
     public List<RentDto> getAllRentsByUserEmailStartsWithIgnoreCase(String email) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<RentDto[]> response =
                 restTemplate.exchange(
@@ -453,9 +452,8 @@ public class LibraryManagerClient {
         return responseList;
     }
 
-
     public Long countRents() {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<Long> response =
                 restTemplate.exchange(
@@ -467,7 +465,7 @@ public class LibraryManagerClient {
     }
 
     public boolean isRentExist(String title) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<Boolean> response =
                 restTemplate.exchange(
@@ -479,28 +477,23 @@ public class LibraryManagerClient {
     }
 
     public void rentBook(Long specimenId, Long userId) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(headers);
         restTemplate.postForObject("http://localhost:8080/v1/rents/" + userId + "?specimenId=" + specimenId, request, RentDto.class);
     }
 
     public void prolongationRent(Long specimenId, Long userId) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(headers);
         restTemplate.put("http://localhost:8080/v1/rents/" + userId + "?specimenId=" + specimenId, request, BookDto.class);
     }
 
     public void returnBook(Long id) {
-        headers.set(HttpHeaders.AUTHORIZATION, jwttoken);
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         restTemplate.exchange("http://localhost:8080/v1/rents?id=" + id, HttpMethod.DELETE, request, Void.class, 1);
     }
-
-    public void setJwttoken(String jwttoken) {
-        this.jwttoken = jwttoken;
-    }
-
 }

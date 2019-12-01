@@ -17,6 +17,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,7 +50,7 @@ public class LoginView extends VerticalLayout {
 
     private RegistrationForm registrationForm;
 
-    private static String jwttoken = "";
+    private String jwttoken = "";
 
     @Autowired
     public LoginView(
@@ -97,7 +98,7 @@ public class LoginView extends VerticalLayout {
                 createAuthenticationToken(client, e.getUsername(), e.getPassword());
 
                 if(authentication != null) {
-                    client.setJwttoken("Bearer " + jwttoken.substring(13, jwttoken.length()-2));
+                    VaadinSession.getCurrent().setAttribute("token", "Bearer " + jwttoken.substring(13, jwttoken.length()-2));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     getUI().get().navigate(LibraryConst.ROUTE_BOOKS);
                 }
