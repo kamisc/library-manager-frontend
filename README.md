@@ -25,7 +25,7 @@ Factory
 4. Application will be run on the localhost:8090 address
 
 #### Users
-In the login panel click "Create new user" button and:
+In the login panel click "Create new account" button and:
 
         Use --> admin@library.com <-- e-mail to create ADMIN user to test all of functions
         
