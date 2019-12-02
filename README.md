@@ -12,7 +12,7 @@ Java 8, Vaadin, Spring, Spring Security, Lombok, Gradle
 Factory
 
 ## Instalation
-#### **_Frontend_**
+#### Frontend
 1. Source code: https://github.com/kamisc/LibraryManager-Frontend
 2. git clone https://github.com/kamisc/LibraryManager-Frontend.git
 3. Run application by the main method in the LibraryManagerFrontendApplication class
