@@ -3,7 +3,8 @@
 [![Build Status](https://travis-ci.org/kamisc/LibraryManager-Frontend.svg?branch=master)](https://travis-ci.org/kamisc/LibraryManager-Frontend)
 
 ## Descripion
-In this repository you can find application code written in Java language with Vaadin framework for Library Manager project. To start application you must
+In this repository you can find application code written in Java language with Vaadin framework for Library Manager project. 
+To start working with the application, you should first run the backend app and then frontend app. 
 
 ## Frameworks and Technologies
 Java 8, Vaadin, Spring, Spring Security, Lombok, Gradle
