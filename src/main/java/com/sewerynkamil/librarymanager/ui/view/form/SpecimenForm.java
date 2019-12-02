@@ -119,7 +119,7 @@ public class SpecimenForm extends FormLayout implements KeyNotifier, FormActions
 
     @Override
     public void delete() {
-        if(client.isRentExist(specimenDto.getBookTitle())) {
+        if(client.isRentExistBySpecimenId(specimenDto.getId())) {
             specimenCantDelete.open();
         } else {
             client.deleteSpecimen(specimenDto.getId());

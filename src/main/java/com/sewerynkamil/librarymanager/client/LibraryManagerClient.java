@@ -464,12 +464,24 @@ public class LibraryManagerClient {
         return response.getBody();
     }
 
-    public boolean isRentExist(String title) {
+    public boolean isRentExistBySpecimenId(Long id) {
         headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
         HttpEntity<String> request = new HttpEntity<>("authentication", headers);
         ResponseEntity<Boolean> response =
                 restTemplate.exchange(
-                        "http://localhost:8080/v1/rents/exist/" + title,
+                        "http://localhost:8080/v1/rents/exist/id/" + id,
+                        HttpMethod.GET,
+                        request,
+                        Boolean.class);
+        return response.getBody();
+    }
+
+    public boolean isRentExistBySpecimenBookTitle(String title) {
+        headers.set(HttpHeaders.AUTHORIZATION, (String) VaadinSession.getCurrent().getAttribute("token"));
+        HttpEntity<String> request = new HttpEntity<>("authentication", headers);
+        ResponseEntity<Boolean> response =
+                restTemplate.exchange(
+                        "http://localhost:8080/v1/rents/exist/title/" + title,
                         HttpMethod.GET,
                         request,
                         Boolean.class);

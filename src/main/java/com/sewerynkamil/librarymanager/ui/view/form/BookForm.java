@@ -120,7 +120,7 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
 
     @Override
     public void delete() {
-        if(client.isRentExist(bookDto.getTitle())) {
+        if(client.isRentExistBySpecimenBookTitle(bookDto.getTitle())) {
             bookCantDelete.open();
         } else {
             client.deleteBook(bookDto.getId());
