@@ -1,6 +1,7 @@
 package com.sewerynkamil.librarymanager.ui.view.form;
 
-import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
+import com.sewerynkamil.librarymanager.client.LibraryManagerBooksClient;
+import com.sewerynkamil.librarymanager.client.LibraryManagerRentsClient;
 import com.sewerynkamil.librarymanager.dto.BookDto;
 import com.sewerynkamil.librarymanager.dto.enumerated.Category;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
@@ -33,7 +34,8 @@ import java.time.LocalDate;
 public class BookForm extends FormLayout implements KeyNotifier, FormActions {
     private ButtonFactory buttonFactory = new ButtonFactory();
     private ComponentDesigner componentDesigner = new ComponentDesigner();
-    private LibraryManagerClient client;
+    private LibraryManagerBooksClient booksClient;
+    private LibraryManagerRentsClient rentsClient;
     private BookDto bookDto;
 
     private ChangeHandler changeHandler;
@@ -59,8 +61,9 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
     private Binder<BookDto> binder = new Binder<>(BookDto.class);
 
     @Autowired
-    public BookForm(LibraryManagerClient client) {
-        this.client = client;
+    public BookForm(LibraryManagerBooksClient booksClient, LibraryManagerRentsClient rentsClient) {
+        this.booksClient = booksClient;
+        this.rentsClient = rentsClient;
 
         setSizeUndefined();
         setWidth("260px");
@@ -100,8 +103,8 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
 
     @Override
     public void save() {
-        if(!client.isBookExist(title.getValue())) {
-            client.saveNewBook(bookDto);
+        if(!booksClient.isBookExist(title.getValue())) {
+            booksClient.saveNewBook(bookDto);
             componentDesigner.setActions(bookSaveSuccessful, changeHandler, dialog);
         } else {
             bookExist.open();
@@ -110,20 +113,20 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
 
     @Override
     public void update() {
-        if(!title.getValue().equals(bookDto.getTitle()) && client.isBookExist(title.getValue())) {
+        if(!title.getValue().equals(bookDto.getTitle()) && booksClient.isBookExist(title.getValue())) {
             bookExist.open();
         } else {
-            client.updateBook(bookDto);
+            booksClient.updateBook(bookDto);
             componentDesigner.setActions(bookUpdateSuccessful, changeHandler, dialog);
         }
     }
 
     @Override
     public void delete() {
-        if(client.isRentExistBySpecimenBookTitle(bookDto.getTitle())) {
+        if(rentsClient.isRentExistBySpecimenBookTitle(bookDto.getTitle())) {
             bookCantDelete.open();
         } else {
-            client.deleteBook(bookDto.getId());
+            booksClient.deleteBook(bookDto.getId());
             componentDesigner.setActions(bookDeleteSuccessful, changeHandler, dialog);
         }
     }
@@ -137,7 +140,7 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
         }
         final boolean persisted = b.getId() != null;
         if(persisted) {
-            bookDto = client.getOneBook(b.getId());
+            bookDto = booksClient.getOneBook(b.getId());
 
             dialog.add(this);
             dialog.open();

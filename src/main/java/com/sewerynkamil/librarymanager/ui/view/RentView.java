@@ -1,6 +1,6 @@
 package com.sewerynkamil.librarymanager.ui.view;
 
-import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
+import com.sewerynkamil.librarymanager.client.LibraryManagerRentsClient;
 import com.sewerynkamil.librarymanager.dto.RentDto;
 import com.sewerynkamil.librarymanager.ui.MainView;
 import com.sewerynkamil.librarymanager.ui.components.ComponentDesigner;
@@ -29,7 +29,7 @@ import org.springframework.security.access.annotation.Secured;
 @Secured("ROLE_Admin")
 public class RentView extends VerticalLayout {
     private ComponentDesigner componentDesigner = new ComponentDesigner();
-    private LibraryManagerClient client;
+    private LibraryManagerRentsClient rentsClient;
 
     private Grid<RentDto> grid = new Grid<>(RentDto.class);
 
@@ -39,8 +39,8 @@ public class RentView extends VerticalLayout {
     private HeaderRow filterRow = grid.appendHeaderRow();
 
     @Autowired
-    public RentView(LibraryManagerClient client) {
-        this.client = client;
+    public RentView(LibraryManagerRentsClient rentsClient) {
+        this.rentsClient = rentsClient;
 
         setSizeFull();
         add(grid);
@@ -56,7 +56,7 @@ public class RentView extends VerticalLayout {
                     if (StringUtils.isBlank(e.getValue())) {
                         rentList();
                     } else {
-                        grid.setItems(client.getAllRentsByBookTitleStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                        grid.setItems(rentsClient.getAllRentsByBookTitleStartsWithIgnoreCase(e.getValue().toLowerCase()));
                     }
                 }
         );
@@ -66,7 +66,7 @@ public class RentView extends VerticalLayout {
                     if (StringUtils.isBlank(e.getValue())) {
                         rentList();
                     } else {
-                        grid.setItems(client.getAllRentsByUserEmailStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                        grid.setItems(rentsClient.getAllRentsByUserEmailStartsWithIgnoreCase(e.getValue().toLowerCase()));
                     }
                 }
         );
@@ -81,15 +81,15 @@ public class RentView extends VerticalLayout {
                     int offset = query.getOffset();
                     int limit = query.getLimit();
                     query.getFilter();
-                    return client.getAllRentsWithLazyLoading(offset, limit).stream();
+                    return rentsClient.getAllRentsWithLazyLoading(offset, limit).stream();
                 },
-                query -> client.countRents().intValue()
+                query -> rentsClient.countRents().intValue()
         ));
     }
 
     private Button createProlongationButton(RentDto rentDto) {
         Button button = new Button("Return book", clickEvent -> {
-            client.returnBook(rentDto.getRentId());
+            rentsClient.returnBook(rentDto.getRentId());
             rentList();
         });
         button.addThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);

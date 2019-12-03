@@ -1,6 +1,6 @@
 package com.sewerynkamil.librarymanager.ui.view;
 
-import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
+import com.sewerynkamil.librarymanager.client.*;
 import com.sewerynkamil.librarymanager.dto.SpecimenDto;
 import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.dto.enumerated.Status;
@@ -36,7 +36,10 @@ import org.springframework.security.access.annotation.Secured;
 public class SpecimenView extends FormLayout implements KeyNotifier {
     private CurrentUser currentUser = new CurrentUser();
     private ButtonFactory buttonFactory = new ButtonFactory();
-    private LibraryManagerClient client;
+    private LibraryManagerBooksClient booksClient;
+    private LibraryManagerSpecimensClient specimensClient;
+    private LibraryManagerUsersClient usersClient;
+    private LibraryManagerRentsClient rentsClient;
     private UserDto userDto;
 
     private Grid<SpecimenDto> grid = new Grid<>(SpecimenDto.class);
@@ -58,10 +61,18 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
     private SpecimenForm specimenForm;
 
     @Autowired
-    public SpecimenView(LibraryManagerClient client, SpecimenForm specimenForm) {
-        this.client = client;
+    public SpecimenView(
+            LibraryManagerBooksClient booksClient,
+            LibraryManagerSpecimensClient specimensClient,
+            LibraryManagerUsersClient usersClient,
+            LibraryManagerRentsClient rentsClient,
+            SpecimenForm specimenForm) {
+        this.booksClient = booksClient;
+        this.specimensClient = specimensClient;
+        this.usersClient = usersClient;
         this.specimenForm = specimenForm;
-        userDto = currentUser.getCurrentUser(client);
+        this.rentsClient = rentsClient;
+        userDto = currentUser.getCurrentUser(usersClient);
 
         add(elements);
         setVisible(false);
@@ -95,9 +106,9 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
     }
 
     void showSpecimens(Long bookId) {
-        id = client.getOneBook(bookId).getId();
-        title = client.getOneBook(bookId).getTitle();
-        bookTitle.setText(client.getOneBook(bookId).getTitle());
+        id = booksClient.getOneBook(bookId).getId();
+        title = booksClient.getOneBook(bookId).getTitle();
+        bookTitle.setText(booksClient.getOneBook(bookId).getTitle());
 
         getSpecimens(bookId);
         dialog.add(this);
@@ -107,19 +118,19 @@ public class SpecimenView extends FormLayout implements KeyNotifier {
 
     private void getSpecimens(Long bookId) {
         if(SecurityUtils.isAccessGranted(BookForm.class)) {
-            grid.setItems(client.getAllSpecimensForOneBook(bookId));
+            grid.setItems(specimensClient.getAllSpecimensForOneBook(bookId));
             grid.setHeight("370px");
             elements.remove(close);
             elements.add(bookTitle, grid, addNewSpecimenButton, close);
         } else {
             elements.add(bookTitle, grid, close);
-            grid.setItems(client.getAllAvailableSpecimensForOneBook(Status.AVAILABLE.getStatus(), bookId));
+            grid.setItems(specimensClient.getAllAvailableSpecimensForOneBook(Status.AVAILABLE.getStatus(), bookId));
         }
     }
 
     private Button createRentButton(SpecimenDto specimenDto, UserDto userDto) {
         Button button = new Button("Rent this book", clickEvent -> {
-            client.rentBook(specimenDto.getId(), userDto.getId());
+            rentsClient.rentBook(specimenDto.getId(), userDto.getId());
             dialog.close();
             rentSuccessful.open();
         });

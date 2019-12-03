@@ -1,6 +1,7 @@
 package com.sewerynkamil.librarymanager.ui.view.form;
 
-import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
+import com.sewerynkamil.librarymanager.client.LibraryManagerAuthenticationClient;
+import com.sewerynkamil.librarymanager.client.LibraryManagerUsersClient;
 import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.dto.enumerated.Role;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
@@ -30,7 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class RegistrationForm extends FormLayout implements KeyNotifier {
     private ButtonFactory buttonFactory = new ButtonFactory();
     private ComponentDesigner componentDesigner = new ComponentDesigner();
-    private LibraryManagerClient client;
+    private LibraryManagerAuthenticationClient authenticationClient;
+    private LibraryManagerUsersClient usersClient;
     private UserDto userDto;
 
     private ChangeHandler changeHandler;
@@ -52,8 +54,9 @@ public class RegistrationForm extends FormLayout implements KeyNotifier {
     private Binder<UserDto> binder = new Binder<>();
 
     @Autowired
-    public RegistrationForm(LibraryManagerClient client) {
-        this.client = client;
+    public RegistrationForm(LibraryManagerAuthenticationClient authenticationClient, LibraryManagerUsersClient usersClient) {
+        this.authenticationClient = authenticationClient;
+        this.usersClient = usersClient;
 
         setWidth("260px");
         add(name, surname, email, phoneNumber, password, save, reset, close);
@@ -108,8 +111,8 @@ public class RegistrationForm extends FormLayout implements KeyNotifier {
         userDto.setPassword(password.getValue());
         userDto.setRole(Role.USER.getRole());
 
-        if(!client.isUserExist(userDto.getEmail())) {
-            client.registerUser(userDto);
+        if(!usersClient.isUserExist(userDto.getEmail())) {
+            authenticationClient.registerUser(userDto);
             componentDesigner.setActions(userSaveSuccessful, changeHandler, dialog);
             reset();
         } else {

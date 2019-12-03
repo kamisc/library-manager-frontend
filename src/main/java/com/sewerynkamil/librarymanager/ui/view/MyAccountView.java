@@ -1,6 +1,7 @@
 package com.sewerynkamil.librarymanager.ui.view;
 
-import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
+import com.sewerynkamil.librarymanager.client.LibraryManagerRentsClient;
+import com.sewerynkamil.librarymanager.client.LibraryManagerUsersClient;
 import com.sewerynkamil.librarymanager.dto.RentDto;
 import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.security.CurrentUser;
@@ -33,7 +34,8 @@ import org.springframework.security.access.annotation.Secured;
 public class MyAccountView extends VerticalLayout {
     private CurrentUser currentUser = new CurrentUser();
     private ButtonFactory buttonFactory = new ButtonFactory();
-    private LibraryManagerClient client;
+    private LibraryManagerUsersClient usersClient;
+    private LibraryManagerRentsClient rentsClient;
     private UserDto userDto;
 
     private Button editMyUserDataButton = buttonFactory.createButton(ButtonType.UPDATE, "Update My data", "192px");
@@ -53,15 +55,16 @@ public class MyAccountView extends VerticalLayout {
     private MyAccountForm myAccountForm;
 
     @Autowired
-    public MyAccountView(LibraryManagerClient client, MyAccountForm myAccountForm) {
-        this.client = client;
+    public MyAccountView(LibraryManagerUsersClient usersClient, LibraryManagerRentsClient rentsClient, MyAccountForm myAccountForm) {
+        this.usersClient = usersClient;
+        this.rentsClient = rentsClient;
         this.myAccountForm = myAccountForm;
-        userDto = currentUser.getCurrentUser(client);
+        userDto = currentUser.getCurrentUser(usersClient);
 
         add(myAccount);
         setAlignItems(Alignment.CENTER);
 
-        grid.setItems(client.getAllRentsByUserId(userDto.getId()));
+        grid.setItems(rentsClient.getAllRentsByUserId(userDto.getId()));
         grid.setColumns("rentId", "specimenId", "bookTitle", "rentDate", "returnDate");
         grid.addComponentColumn(rentDto -> createProlongationButton(rentDto, userDto));
 
@@ -91,12 +94,12 @@ public class MyAccountView extends VerticalLayout {
     }
 
     private void userRentList(Long id) {
-        grid.setItems(client.getAllRentsByUserId(id));
+        grid.setItems(rentsClient.getAllRentsByUserId(id));
     }
 
     private Button createProlongationButton(RentDto rentDto, UserDto userDto) {
         Button button = new Button("Prolongate rent", clickEvent -> {
-            client.prolongationRent(rentDto.getSpecimenId(), userDto.getId());
+            rentsClient.prolongationRent(rentDto.getSpecimenId(), userDto.getId());
             userRentList(userDto.getId());
         });
         button.addThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);

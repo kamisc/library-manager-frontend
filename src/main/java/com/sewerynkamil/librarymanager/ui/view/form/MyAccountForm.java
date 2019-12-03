@@ -1,6 +1,6 @@
 package com.sewerynkamil.librarymanager.ui.view.form;
 
-import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
+import com.sewerynkamil.librarymanager.client.LibraryManagerUsersClient;
 import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
 import com.sewerynkamil.librarymanager.ui.components.ButtonType;
@@ -34,7 +34,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class MyAccountForm extends FormLayout implements KeyNotifier {
     private ButtonFactory buttonFactory = new ButtonFactory();
     private ComponentDesigner componentDesigner = new ComponentDesigner();
-    private LibraryManagerClient client;
+    private LibraryManagerUsersClient usersClient;
     private UserDto userDto;
 
     private ChangeHandler changeHandler;
@@ -56,8 +56,8 @@ public class MyAccountForm extends FormLayout implements KeyNotifier {
     private Binder<UserDto> binder = new Binder<>(UserDto.class);
 
     @Autowired
-    public MyAccountForm(LibraryManagerClient client) {
-        this.client = client;
+    public MyAccountForm(LibraryManagerUsersClient usersClient) {
+        this.usersClient = usersClient;
 
         setSizeUndefined();
         setWidth("260px");
@@ -96,7 +96,7 @@ public class MyAccountForm extends FormLayout implements KeyNotifier {
             passwordError.open();
         } else {
             userDto.setPassword(passwordEncoder().encode(password.getValue()));
-            client.updateUser(userDto);
+            usersClient.updateUser(userDto);
             componentDesigner.setActions(userUpdateSuccessful, changeHandler, dialog);
         }
     }
@@ -104,7 +104,7 @@ public class MyAccountForm extends FormLayout implements KeyNotifier {
     public void editUser(UserDto u) {
         dialog.setCloseOnOutsideClick(false);
 
-        userDto = client.getOneUserById(u.getId());
+        userDto = usersClient.getOneUserById(u.getId());
         password.clear();
 
         dialog.add(this);

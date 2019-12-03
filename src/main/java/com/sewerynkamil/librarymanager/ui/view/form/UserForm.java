@@ -1,6 +1,6 @@
 package com.sewerynkamil.librarymanager.ui.view.form;
 
-import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
+import com.sewerynkamil.librarymanager.client.LibraryManagerUsersClient;
 import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.dto.enumerated.Role;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
@@ -33,7 +33,7 @@ import org.springframework.security.access.annotation.Secured;
 public class UserForm extends FormLayout implements KeyNotifier, FormActions {
     private ButtonFactory buttonFactory = new ButtonFactory();
     private ComponentDesigner componentDesigner = new ComponentDesigner();
-    private LibraryManagerClient client;
+    private LibraryManagerUsersClient usersClient;
     private UserDto userDto;
 
     private ChangeHandler changeHandler;
@@ -63,8 +63,8 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
     private String oldEmail;
 
     @Autowired
-    public UserForm(LibraryManagerClient client) {
-        this.client = client;
+    public UserForm(LibraryManagerUsersClient usersClient) {
+        this.usersClient = usersClient;
 
         setSizeUndefined();
         setWidth("260px");
@@ -110,8 +110,8 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
 
     @Override
     public void save() {
-        if(!client.isUserExist(email.getValue())) {
-            client.saveNewUser(userDto);
+        if(!usersClient.isUserExist(email.getValue())) {
+            usersClient.saveNewUser(userDto);
             componentDesigner.setActions(userSaveSuccessful, changeHandler, dialog);
         } else {
             userExist.open();
@@ -120,20 +120,20 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
 
     @Override
     public void update() {
-        if(!email.getValue().equals(oldEmail) && client.isUserExist(email.getValue())) {
+        if(!email.getValue().equals(oldEmail) && usersClient.isUserExist(email.getValue())) {
             userExist.open();
         } else {
-            client.updateUser(userDto);
+            usersClient.updateUser(userDto);
             componentDesigner.setActions(userUpdateSuccessful, changeHandler, dialog);
         }
     }
 
     @Override
     public void delete() {
-        if (client.isUserHasRents(userDto.getEmail())) {
+        if (usersClient.isUserHasRents(userDto.getEmail())) {
             userHasRents.open();
         } else {
-            client.deleteUser(userDto.getId());
+            usersClient.deleteUser(userDto.getId());
             componentDesigner.setActions(userDeleteSuccessful, changeHandler, dialog);
         }
     }
@@ -147,7 +147,7 @@ public class UserForm extends FormLayout implements KeyNotifier, FormActions {
         }
         final boolean persisted = u.getId() != null;
         if(persisted) {
-            userDto = client.getOneUserById(u.getId());
+            userDto = usersClient.getOneUserById(u.getId());
 
             oldEmail = userDto.getEmail();
 

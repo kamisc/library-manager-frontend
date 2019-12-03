@@ -1,6 +1,6 @@
 package com.sewerynkamil.librarymanager.security;
 
-import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
+import com.sewerynkamil.librarymanager.client.LibraryManagerUsersClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +22,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final String PAGE_LOGIN = "login";
 
     @Autowired
-    private LibraryManagerClient client;
+    private LibraryManagerUsersClient usersClient;
 
     @Bean
     @Override
@@ -49,7 +49,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     @Override
     public UserDetailsService userDetailsService() {
-        return username -> client.getOneUserByEmail(username);
+        return username -> usersClient.getOneUserByEmail(username);
     }
 
     @Override

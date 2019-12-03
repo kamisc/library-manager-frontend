@@ -1,6 +1,7 @@
 package com.sewerynkamil.librarymanager.ui.view.form;
 
-import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
+import com.sewerynkamil.librarymanager.client.LibraryManagerRentsClient;
+import com.sewerynkamil.librarymanager.client.LibraryManagerSpecimensClient;
 import com.sewerynkamil.librarymanager.dto.SpecimenDto;
 import com.sewerynkamil.librarymanager.dto.enumerated.Status;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
@@ -34,7 +35,8 @@ import java.time.LocalDate;
 public class SpecimenForm extends FormLayout implements KeyNotifier, FormActions {
     private ButtonFactory buttonFactory = new ButtonFactory();
     private ComponentDesigner componentDesigner = new ComponentDesigner();
-    private LibraryManagerClient client;
+    private LibraryManagerSpecimensClient specimensClient;
+    private LibraryManagerRentsClient rentsClient;
     private SpecimenDto specimenDto;
 
     private ChangeHandler changeHandler;
@@ -60,8 +62,11 @@ public class SpecimenForm extends FormLayout implements KeyNotifier, FormActions
     private Binder<SpecimenDto> binder = new Binder<>(SpecimenDto.class);
 
     @Autowired
-    public SpecimenForm(LibraryManagerClient client) {
-        this.client = client;
+    public SpecimenForm(
+            LibraryManagerSpecimensClient specimensClient,
+            LibraryManagerRentsClient rentsClient) {
+        this.specimensClient = specimensClient;
+        this.rentsClient = rentsClient;
 
         setSizeUndefined();
         setWidth("260px");
@@ -107,22 +112,22 @@ public class SpecimenForm extends FormLayout implements KeyNotifier, FormActions
 
     @Override
     public void save() {
-        client.saveNewSpecimen(specimenDto);
+        specimensClient.saveNewSpecimen(specimenDto);
         componentDesigner.setActions(specimenSaveSuccessful, changeHandler, dialog);
     }
 
     @Override
     public void update() {
-        client.updateSpecimen(specimenDto);
+        specimensClient.updateSpecimen(specimenDto);
         componentDesigner.setActions(specimenUpdateSuccessful, changeHandler, dialog);
     }
 
     @Override
     public void delete() {
-        if(client.isRentExistBySpecimenId(specimenDto.getId())) {
+        if(rentsClient.isRentExistBySpecimenId(specimenDto.getId())) {
             specimenCantDelete.open();
         } else {
-            client.deleteSpecimen(specimenDto.getId());
+            specimensClient.deleteSpecimen(specimenDto.getId());
             componentDesigner.setActions(specimenDeleteSuccessful, changeHandler, dialog);
         }
     }
@@ -135,7 +140,7 @@ public class SpecimenForm extends FormLayout implements KeyNotifier, FormActions
         }
         final boolean persisted = s.getId() != null;
         if(persisted) {
-            specimenDto = client.getOneSpecimen(s.getId());
+            specimenDto = specimensClient.getOneSpecimen(s.getId());
 
             dialog.add(this);
             dialog.open();

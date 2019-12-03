@@ -1,6 +1,6 @@
 package com.sewerynkamil.librarymanager.ui.view;
 
-import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
+import com.sewerynkamil.librarymanager.client.LibraryManagerUsersClient;
 import com.sewerynkamil.librarymanager.dto.UserDto;
 import com.sewerynkamil.librarymanager.ui.MainView;
 import com.sewerynkamil.librarymanager.ui.components.ButtonFactory;
@@ -32,7 +32,7 @@ import org.springframework.security.access.annotation.Secured;
 public class UserView extends VerticalLayout {
     private ComponentDesigner componentDesigner = new ComponentDesigner();
     private ButtonFactory buttonFactory = new ButtonFactory();
-    private LibraryManagerClient client;
+    private LibraryManagerUsersClient usersClient;
 
     private Button addNewUserButton = buttonFactory.createButton(ButtonType.ADDBUTTON, "Add new user", "225px");
     private Grid<UserDto> grid = new Grid<>(UserDto.class);
@@ -45,8 +45,8 @@ public class UserView extends VerticalLayout {
     private UserForm userForm;
 
     @Autowired
-    public UserView(LibraryManagerClient client, UserForm userForm) {
-        this.client = client;
+    public UserView(LibraryManagerUsersClient usersClient, UserForm userForm) {
+        this.usersClient = usersClient;
         this.userForm = userForm;
 
         setSizeFull();
@@ -62,7 +62,7 @@ public class UserView extends VerticalLayout {
                     if (StringUtils.isBlank(e.getValue())) {
                         userList();
                     } else {
-                        grid.setItems(client.getAllUsersByNameStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                        grid.setItems(usersClient.getAllUsersByNameStartsWithIgnoreCase(e.getValue().toLowerCase()));
                     }
                 }
         );
@@ -72,7 +72,7 @@ public class UserView extends VerticalLayout {
                     if (StringUtils.isBlank(e.getValue())) {
                         userList();
                     } else {
-                        grid.setItems(client.getAllUsersBySurnameStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                        grid.setItems(usersClient.getAllUsersBySurnameStartsWithIgnoreCase(e.getValue().toLowerCase()));
                     }
                 }
         );
@@ -82,7 +82,7 @@ public class UserView extends VerticalLayout {
                     if (StringUtils.isBlank(e.getValue())) {
                         userList();
                     } else {
-                        grid.setItems(client.getAllUsersByEmailStartsWithIgnoreCase(e.getValue().toLowerCase()));
+                        grid.setItems(usersClient.getAllUsersByEmailStartsWithIgnoreCase(e.getValue().toLowerCase()));
                     }
                 }
         );
@@ -109,9 +109,9 @@ public class UserView extends VerticalLayout {
                     int offset = query.getOffset();
                     int limit = query.getLimit();
                     query.getFilter();
-                    return client.getAllUsersWithLazyLoading(offset, limit).stream();
+                    return usersClient.getAllUsersWithLazyLoading(offset, limit).stream();
                 },
-                query -> client.countUsers().intValue()
+                query -> usersClient.countUsers().intValue()
         ));
     }
 }

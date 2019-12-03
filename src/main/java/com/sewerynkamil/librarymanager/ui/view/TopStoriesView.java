@@ -1,6 +1,6 @@
 package com.sewerynkamil.librarymanager.ui.view;
 
-import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
+import com.sewerynkamil.librarymanager.client.LibraryManagerTopStoriesClient;
 import com.sewerynkamil.librarymanager.dto.enumerated.NYTimesSection;
 import com.sewerynkamil.librarymanager.dto.nytimes.NYTimesResultsDto;
 import com.sewerynkamil.librarymanager.ui.MainView;
@@ -31,7 +31,7 @@ import org.springframework.security.access.annotation.Secured;
 @Secured({"ROLE_User", "ROLE_Admin"})
 public class TopStoriesView extends VerticalLayout {
     private ComponentDesigner componentDesigner = new ComponentDesigner();
-    private LibraryManagerClient client;
+    private LibraryManagerTopStoriesClient topStoriesClient;
 
     private Grid<NYTimesResultsDto> grid = new Grid<>(NYTimesResultsDto.class);
 
@@ -42,8 +42,8 @@ public class TopStoriesView extends VerticalLayout {
     private Label copyright = new Label("Copyright (c) 2019 The New York Times Company. All Rights Reserved.");
 
     @Autowired
-    public TopStoriesView(LibraryManagerClient client) {
-        this.client = client;
+    public TopStoriesView(LibraryManagerTopStoriesClient topStoriesClient) {
+        this.topStoriesClient = topStoriesClient;
 
         setSizeFull();
         add(top, grid);
@@ -64,9 +64,9 @@ public class TopStoriesView extends VerticalLayout {
 
     private void getTopStories(String section) {
         if(StringUtils.isBlank(section)) {
-            grid.setItems(client.getAllTopStoriesBySection("Books").getResults());
+            grid.setItems(topStoriesClient.getAllTopStoriesBySection("Books").getResults());
         } else {
-            grid.setItems(client.getAllTopStoriesBySection(section.toLowerCase()).getResults());
+            grid.setItems(topStoriesClient.getAllTopStoriesBySection(section.toLowerCase()).getResults());
         }
     }
 

@@ -1,6 +1,6 @@
 package com.sewerynkamil.librarymanager.security;
 
-import com.sewerynkamil.librarymanager.client.LibraryManagerClient;
+import com.sewerynkamil.librarymanager.client.LibraryManagerUsersClient;
 import com.sewerynkamil.librarymanager.dto.UserDto;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,8 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 
 public class CurrentUser {
-    public UserDto getCurrentUser(LibraryManagerClient client) {
-        return client.getOneUserByEmail(getPrincipalUsername());
+    public UserDto getCurrentUser(LibraryManagerUsersClient usersClient) {
+        return usersClient.getOneUserByEmail(getPrincipalUsername());
     }
 
     private String getPrincipalUsername() {
