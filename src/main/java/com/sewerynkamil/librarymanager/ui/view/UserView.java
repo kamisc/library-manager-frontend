@@ -45,7 +45,9 @@ public class UserView extends VerticalLayout {
     private UserForm userForm;
 
     @Autowired
-    public UserView(LibraryManagerUsersClient usersClient, UserForm userForm) {
+    public UserView(
+            LibraryManagerUsersClient usersClient,
+            UserForm userForm) {
         this.usersClient = usersClient;
         this.userForm = userForm;
 

@@ -61,7 +61,9 @@ public class BookForm extends FormLayout implements KeyNotifier, FormActions {
     private Binder<BookDto> binder = new Binder<>(BookDto.class);
 
     @Autowired
-    public BookForm(LibraryManagerBooksClient booksClient, LibraryManagerRentsClient rentsClient) {
+    public BookForm(
+            LibraryManagerBooksClient booksClient,
+            LibraryManagerRentsClient rentsClient) {
         this.booksClient = booksClient;
         this.rentsClient = rentsClient;
 

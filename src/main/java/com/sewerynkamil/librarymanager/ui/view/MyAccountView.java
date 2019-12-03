@@ -55,7 +55,10 @@ public class MyAccountView extends VerticalLayout {
     private MyAccountForm myAccountForm;
 
     @Autowired
-    public MyAccountView(LibraryManagerUsersClient usersClient, LibraryManagerRentsClient rentsClient, MyAccountForm myAccountForm) {
+    public MyAccountView(
+            LibraryManagerUsersClient usersClient,
+            LibraryManagerRentsClient rentsClient,
+            MyAccountForm myAccountForm) {
         this.usersClient = usersClient;
         this.rentsClient = rentsClient;
         this.myAccountForm = myAccountForm;

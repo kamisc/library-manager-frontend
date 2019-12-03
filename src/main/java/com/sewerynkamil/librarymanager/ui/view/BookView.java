@@ -48,7 +48,10 @@ public class BookView extends VerticalLayout {
     private SpecimenView specimenView;
 
     @Autowired
-    public BookView(LibraryManagerBooksClient booksClient, BookForm bookForm, SpecimenView specimenView) {
+    public BookView(
+            LibraryManagerBooksClient booksClient,
+            BookForm bookForm,
+            SpecimenView specimenView) {
         this.booksClient = booksClient;
         this.bookForm = bookForm;
         this.specimenView = specimenView;

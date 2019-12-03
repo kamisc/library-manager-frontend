@@ -54,7 +54,9 @@ public class RegistrationForm extends FormLayout implements KeyNotifier {
     private Binder<UserDto> binder = new Binder<>();
 
     @Autowired
-    public RegistrationForm(LibraryManagerAuthenticationClient authenticationClient, LibraryManagerUsersClient usersClient) {
+    public RegistrationForm(
+            LibraryManagerAuthenticationClient authenticationClient,
+            LibraryManagerUsersClient usersClient) {
         this.authenticationClient = authenticationClient;
         this.usersClient = usersClient;
 

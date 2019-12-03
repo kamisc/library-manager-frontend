@@ -89,7 +89,9 @@ public class LoginView extends VerticalLayout {
         createAccountButton.addClickListener(e -> registrationForm.createUser(new UserDto()));
     }
 
-    private void generateLoginListener(AuthenticationManager authenticationManager, LibraryManagerAuthenticationClient authenticationClient) {
+    private void generateLoginListener(
+            AuthenticationManager authenticationManager,
+            LibraryManagerAuthenticationClient authenticationClient) {
         loginForm.addLoginListener(e -> {
             try {
                 final Authentication authentication = authenticationManager
@@ -98,7 +100,8 @@ public class LoginView extends VerticalLayout {
                 createAuthenticationToken(authenticationClient, e.getUsername(), e.getPassword());
 
                 if(authentication != null) {
-                    VaadinSession.getCurrent().setAttribute("token", "Bearer " + jwttoken.substring(13, jwttoken.length()-2));
+                    VaadinSession.getCurrent().setAttribute(
+                            "token", "Bearer " + jwttoken.substring(13, jwttoken.length()-2));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     getUI().get().navigate(LibraryConst.ROUTE_BOOKS);
                 }
@@ -108,7 +111,10 @@ public class LoginView extends VerticalLayout {
         });
     }
 
-    private void createAuthenticationToken(LibraryManagerAuthenticationClient authenticationClient, String username, String password) {
+    private void createAuthenticationToken(
+            LibraryManagerAuthenticationClient authenticationClient,
+            String username,
+            String password) {
         if(jwttoken != null) {
             jwttoken = "";
             jwttoken = jwttoken + authenticationClient.createAuthenticationToken(
