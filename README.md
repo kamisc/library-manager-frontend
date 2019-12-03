@@ -9,7 +9,7 @@ To start working with the application, you should first run the backend app and 
 ## Frameworks and Technologies
 Java 8, Vaadin, Spring Boot, Spring Security, Lombok, Gradle
 
-## Design patterns
+## Design Patterns
 Factory
 
 ## Instalation
@@ -23,7 +23,7 @@ Factory
 1. Source code: https://github.com/kamisc/LibraryManager-Backend
 2. git clone https://github.com/kamisc/LibraryManager-Backend.git
 3. Run application by the main method in the LibraryManagerBackendApplication class
-4. Application will be run on the localhost:8090 address
+4. Application will be run on the localhost:8080 address
 
 #### Users
 In the login panel click "Create new account" button and:
