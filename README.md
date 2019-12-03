@@ -7,7 +7,7 @@ In this repository you can find application code written in Java language with V
 To start working with the application, you should first run the backend app and then frontend app. 
 
 ## Frameworks and Technologies
-Java 8, Vaadin, Spring, Spring Security, Lombok, Gradle
+Java 8, Vaadin, Spring Boot, Spring Security, Lombok, Gradle
 
 ## Design patterns
 Factory
