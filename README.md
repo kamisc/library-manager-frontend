@@ -6,6 +6,11 @@
 In this repository you can find application code written in Java language with Vaadin framework for Library Manager project. 
 To start working with the application, you should first run the backend app and then frontend app. 
 
+[Check Live Demo](https://library-manager-frontend.herokuapp.com/login)
+   
+        Admin credentials: L: admin@library.com / P: admin
+        User credentials: create an account with your own credentials :-) 
+
 ## Frameworks and Technologies
 Java 8, Vaadin, Spring Boot, Spring Security, Lombok, Gradle
 
